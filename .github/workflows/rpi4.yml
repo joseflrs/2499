@@ -47,7 +47,7 @@ jobs:
                 sed -i '129d' package/base-files/Makefile
                 sed -i '135d' package/base-files/Makefile
                 mkdir -p files/www/repo
-                mv config.buildinfo .config
+                mv config.buildinfo4 .config
                 make defconfig
                 make download -j32
                 make -j$(nproc) 'IGNORE_ERRORS=n m'
