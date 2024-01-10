@@ -1,7 +1,5 @@
 name: RPi5 images
-on:
-  schedule:
-    - cron: '50 17 * * *'
+on: [push]
 
 jobs:
     build:
