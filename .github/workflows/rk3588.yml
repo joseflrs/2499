@@ -6,6 +6,10 @@ jobs:
         name: Build RK3588 Images
         runs-on: ubuntu-latest
         steps:
+            - name: Setup Ubuntu
+              run: |
+               sudo apt update
+               sudo apt install -y python3 python3-pip python3-ply python3-distutils python3-pyelftools libpython3-dev swig
             - name: Maximize build space
               uses: easimon/maximize-build-space@master
               with:
@@ -50,6 +54,7 @@ jobs:
                 mv config.buildinfo3 .config
                 make defconfig
                 make download -j32
+                rm -rf files
                 make -j$(nproc) 'IGNORE_ERRORS=n m'
                 rm -rf bin/targets/rockchip/armv8/packages
                 echo "D=$(date +'%Y.%m.%d')" >> $GITHUB_ENV
