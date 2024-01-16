@@ -1,4 +1,4 @@
-From 827ca4ec8b7bd08955e6fd14bf2288195de934c7 Mon Sep 17 00:00:00 2001
+From 0b279b9643ddd8391516ded31174bec46038e7db Mon Sep 17 00:00:00 2001
 From: Marty Jones <mj8263788@gmail.com>
 Date: Fri, 22 Dec 2023 00:24:24 -0500
 Subject: [PATCH 01/37] Revert "linux-firmware: update to 20231211"
@@ -31,48 +31,10 @@ index 79341c30cb..ef6cd075de 100644
 2.40.1
 
 
-From f87932086be67c527b787870dce52ba2260d1658 Mon Sep 17 00:00:00 2001
-From: Marty Jones <mj8263788@gmail.com>
-Date: Mon, 8 Jan 2024 16:03:43 -0500
-Subject: [PATCH 02/37] rockchip cpu freq CONSERVATIVE
-
----
- target/linux/rockchip/armv8/config-6.1 | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
-
-diff --git a/target/linux/rockchip/armv8/config-6.1 b/target/linux/rockchip/armv8/config-6.1
-index 1830a89c93..4b1081b1cd 100644
---- a/target/linux/rockchip/armv8/config-6.1
-+++ b/target/linux/rockchip/armv8/config-6.1
-@@ -142,15 +142,16 @@ CONFIG_CONTIG_ALLOC=y
- CONFIG_CPUFREQ_DT=y
- CONFIG_CPUFREQ_DT_PLATDEV=y
- CONFIG_CPU_FREQ=y
-+CONFIG_CPU_FREQ_DEFAULT_GOV_CONSERVATIVE=y
- # CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE is not set
--CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL=y
- CONFIG_CPU_FREQ_GOV_ATTR_SET=y
--# CONFIG_CPU_FREQ_GOV_CONSERVATIVE is not set
--# CONFIG_CPU_FREQ_GOV_ONDEMAND is not set
-+CONFIG_CPU_FREQ_GOV_COMMON=y
-+CONFIG_CPU_FREQ_GOV_CONSERVATIVE=y
-+CONFIG_CPU_FREQ_GOV_ONDEMAND=y
- CONFIG_CPU_FREQ_GOV_PERFORMANCE=y
- CONFIG_CPU_FREQ_GOV_POWERSAVE=y
- CONFIG_CPU_FREQ_GOV_SCHEDUTIL=y
--# CONFIG_CPU_FREQ_GOV_USERSPACE is not set
-+CONFIG_CPU_FREQ_GOV_USERSPACE=y
- CONFIG_CPU_FREQ_STAT=y
- CONFIG_CPU_IDLE=y
- CONFIG_CPU_IDLE_GOV_MENU=y
--- 
-2.40.1
-
-
-From a609f09adf97a81e1cb730b221623e96182d4b71 Mon Sep 17 00:00:00 2001
+From c472daf357c12652a1da22ff81877603d95b9907 Mon Sep 17 00:00:00 2001
 From: Marty Jones <mj8263788@gmail.com>
 Date: Fri, 5 Jan 2024 17:36:28 -0500
-Subject: [PATCH 03/37] CI: build rockchip ext4 images
+Subject: [PATCH 02/37] CI: build rockchip ext4 images
 
 Signed-off-by: Marty Jones <mj8263788@gmail.com>
 ---
@@ -1435,7 +1397,7 @@ index 0000000000..008e8f860c
 +# CONFIG_TARGET_DEVICE_rockchip_armv8_DEVICE_rockchip_bpi-r2-pro is not set
 diff --git a/.github/workflows/rockchip-ext4.yaml b/.github/workflows/rockchip-ext4.yaml
 new file mode 100755
-index 0000000000..acfc2e1f43
+index 0000000000..1b97cdd8d1
 --- /dev/null
 +++ b/.github/workflows/rockchip-ext4.yaml
 @@ -0,0 +1,98 @@
@@ -1472,9 +1434,9 @@ index 0000000000..acfc2e1f43
 +                cd -
 +                cd  feeds/packages
 +                wget https://gist.githubusercontent.com/mj22226/351f11e66f08f06e37a985719a31ddb4/raw/b35ba7a3aac1949bd6bbeaad065a0a93dc3c34f0/01-cpu.patch
-+
-+                git apply  01-cpu.patch
-+
++                wget https://gist.githubusercontent.com/mj22226/b66f5c1bd5fc7e1cb3cf2c690b5dbd5a/raw/b955e726cbb0948d932c8d6143229ad604320149/20-lxc.patch
++                git apply 01-cpu.patch
++                git apply 20-lxc.patch
 +                cd -
 +                sed -i "70s/'0'/'1'/" feeds/luci/applications/luci-app-statistics/root/etc/config/luci_statistics
 +                sed -i "83s/'0'/'1'/" feeds/luci/applications/luci-app-statistics/root/etc/config/luci_statistics
@@ -1541,10 +1503,10 @@ index 0000000000..acfc2e1f43
 2.40.1
 
 
-From f073017bfdc95410be464d67a5fb09322c0bb2a9 Mon Sep 17 00:00:00 2001
+From a829da2cc8d1092cd51e0349e93021dccaca9868 Mon Sep 17 00:00:00 2001
 From: Marty Jones <mj8263788@gmail.com>
 Date: Fri, 5 Jan 2024 17:40:18 -0500
-Subject: [PATCH 04/37] CI: build rockchip images
+Subject: [PATCH 03/37] CI: build rockchip images
 
 Signed-off-by: Marty Jones <mj8263788@gmail.com>
 ---
@@ -2959,7 +2921,7 @@ rename from .github/workflows/push-containers.yml
 rename to .github/workflows/push-containersyml
 diff --git a/.github/workflows/rockchip.yaml b/.github/workflows/rockchip.yaml
 new file mode 100755
-index 0000000000..747608ce7c
+index 0000000000..ed989aa5e5
 --- /dev/null
 +++ b/.github/workflows/rockchip.yaml
 @@ -0,0 +1,96 @@
@@ -2996,9 +2958,9 @@ index 0000000000..747608ce7c
 +                cd -
 +                cd  feeds/packages
 +                wget https://gist.githubusercontent.com/mj22226/351f11e66f08f06e37a985719a31ddb4/raw/b35ba7a3aac1949bd6bbeaad065a0a93dc3c34f0/01-cpu.patch
-+
-+                git apply  01-cpu.patch
-+
++                wget https://gist.githubusercontent.com/mj22226/b66f5c1bd5fc7e1cb3cf2c690b5dbd5a/raw/b955e726cbb0948d932c8d6143229ad604320149/20-lxc.patch
++                git apply 01-cpu.patch
++                git apply 20-lxc.patch
 +                cd -
 +                sed -i "70s/'0'/'1'/" feeds/luci/applications/luci-app-statistics/root/etc/config/luci_statistics
 +                sed -i "83s/'0'/'1'/" feeds/luci/applications/luci-app-statistics/root/etc/config/luci_statistics
@@ -3071,10 +3033,10 @@ rename to .github/workflows/toolsyml
 2.40.1
 
 
-From 6681af27469d48360bac2bca0c120f16f3f22627 Mon Sep 17 00:00:00 2001
+From 96e088e1b5b72dc29d537787d1533a38d384f6a2 Mon Sep 17 00:00:00 2001
 From: Marty Jones <mj8263788@gmail.com>
 Date: Tue, 5 Sep 2023 21:36:15 -0400
-Subject: [PATCH 05/37] revert fw_devlink=permissive
+Subject: [PATCH 04/37] revert fw_devlink=permissive
 
 ---
  ...vert-driver-core-Set-fw_devlink-on-b.patch | 30 -------------------
@@ -3121,10 +3083,10 @@ index 98081c4b64..0000000000
 2.40.1
 
 
-From 6a4d8116b6374c952deb259a273e3968e28054fc Mon Sep 17 00:00:00 2001
+From 40f5042da5298686f6f23b6b636ea85815c851cd Mon Sep 17 00:00:00 2001
 From: Marty Jones <mj8263788@gmail.com>
 Date: Thu, 4 Jan 2024 18:11:10 -0500
-Subject: [PATCH 06/37] rockchip: add support for rk3566/68/88 boards
+Subject: [PATCH 05/37] rockchip: add support for rk3566/68/88 boards
 
 Signed-off-by: Marty Jones <mj8263788@gmail.com>
 ---
@@ -4845,7 +4807,7 @@ index 0000000000..54fad098dd
 +CONFIG_ZLIB_INFLATE=y
 +CONFIG_ZONE_DMA32=y
 diff --git a/target/linux/rockchip/armv8/config-6.1 b/target/linux/rockchip/armv8/config-6.1
-index 4b1081b1cd..6d21a5679e 100644
+index 1830a89c93..d71c8c5088 100644
 --- a/target/linux/rockchip/armv8/config-6.1
 +++ b/target/linux/rockchip/armv8/config-6.1
 @@ -1,4 +1,5 @@
@@ -4982,7 +4944,7 @@ index 4b1081b1cd..6d21a5679e 100644
  CONFIG_CONSOLE_TRANSLATIONS=y
  CONFIG_CONTEXT_TRACKING=y
  CONFIG_CONTEXT_TRACKING_IDLE=y
-@@ -168,41 +180,52 @@ CONFIG_CRC16=y
+@@ -167,41 +179,52 @@ CONFIG_CRC16=y
  CONFIG_CRC32_SLICEBY8=y
  CONFIG_CRC64=y
  CONFIG_CRC64_ROCKSOFT=y
@@ -5043,7 +5005,7 @@ index 4b1081b1cd..6d21a5679e 100644
  CONFIG_DEVMEM=y
  # CONFIG_DEVPORT is not set
  CONFIG_DMADEVICES=y
-@@ -213,6 +236,22 @@ CONFIG_DMA_OF=y
+@@ -212,6 +235,22 @@ CONFIG_DMA_OF=y
  CONFIG_DMA_OPS=y
  CONFIG_DMA_SHARED_BUFFER=y
  CONFIG_DNOTIFY=y
@@ -5066,7 +5028,7 @@ index 4b1081b1cd..6d21a5679e 100644
  CONFIG_DTC=y
  CONFIG_DT_IDLE_GENPD=y
  CONFIG_DT_IDLE_STATES=y
-@@ -231,6 +270,7 @@ CONFIG_EXT4_FS_POSIX_ACL=y
+@@ -230,6 +269,7 @@ CONFIG_EXT4_FS_POSIX_ACL=y
  CONFIG_EXTCON=y
  CONFIG_F2FS_FS=y
  CONFIG_FANOTIFY=y
@@ -5074,7 +5036,7 @@ index 4b1081b1cd..6d21a5679e 100644
  CONFIG_FHANDLE=y
  CONFIG_FIXED_PHY=y
  CONFIG_FIX_EARLYCON_MEM=y
-@@ -267,12 +307,14 @@ CONFIG_GENERIC_MSI_IRQ=y
+@@ -266,12 +306,14 @@ CONFIG_GENERIC_MSI_IRQ=y
  CONFIG_GENERIC_MSI_IRQ_DOMAIN=y
  CONFIG_GENERIC_PCI_IOMAP=y
  CONFIG_GENERIC_PHY=y
@@ -5089,7 +5051,7 @@ index 4b1081b1cd..6d21a5679e 100644
  CONFIG_GPIOLIB_IRQCHIP=y
  CONFIG_GPIO_CDEV=y
  CONFIG_GPIO_DWAPB=y
-@@ -280,30 +322,38 @@ CONFIG_GPIO_GENERIC=y
+@@ -279,30 +321,38 @@ CONFIG_GPIO_GENERIC=y
  CONFIG_GPIO_GENERIC_PLATFORM=y
  CONFIG_GPIO_ROCKCHIP=y
  CONFIG_GPIO_SYSCON=y
@@ -5132,7 +5094,7 @@ index 4b1081b1cd..6d21a5679e 100644
  CONFIG_ILLEGAL_POINTER_VALUE=0xdead000000000000
  CONFIG_INDIRECT_PIO=y
  CONFIG_INPUT=y
-@@ -312,12 +362,18 @@ CONFIG_INPUT_FF_MEMLESS=y
+@@ -311,12 +361,18 @@ CONFIG_INPUT_FF_MEMLESS=y
  CONFIG_INPUT_KEYBOARD=y
  CONFIG_INPUT_LEDS=y
  CONFIG_INPUT_MATRIXKMAP=y
@@ -5153,7 +5115,7 @@ index 4b1081b1cd..6d21a5679e 100644
  CONFIG_IOMMU_DMA=y
  CONFIG_IOMMU_IOVA=y
  CONFIG_IOMMU_IO_PGTABLE=y
-@@ -358,17 +414,21 @@ CONFIG_MAGIC_SYSRQ=y
+@@ -357,17 +413,21 @@ CONFIG_MAGIC_SYSRQ=y
  CONFIG_MAGIC_SYSRQ_SERIAL=y
  CONFIG_MAILBOX=y
  # CONFIG_MAILBOX_TEST is not set
@@ -5176,7 +5138,7 @@ index 4b1081b1cd..6d21a5679e 100644
  CONFIG_MFD_SYSCON=y
  CONFIG_MIGRATION=y
  CONFIG_MMC=y
-@@ -380,16 +440,37 @@ CONFIG_MMC_DW=y
+@@ -379,16 +439,37 @@ CONFIG_MMC_DW=y
  # CONFIG_MMC_DW_EXYNOS is not set
  # CONFIG_MMC_DW_HI3798CV200 is not set
  # CONFIG_MMC_DW_K3 is not set
@@ -5215,7 +5177,7 @@ index 4b1081b1cd..6d21a5679e 100644
  CONFIG_MQ_IOSCHED_DEADLINE=y
  # CONFIG_MTD_CFI is not set
  CONFIG_MTD_CMDLINE_PARTS=y
-@@ -400,22 +481,32 @@ CONFIG_MTD_SPLIT_FIRMWARE=y
+@@ -399,22 +480,32 @@ CONFIG_MTD_SPLIT_FIRMWARE=y
  CONFIG_MUTEX_SPIN_ON_OWNER=y
  CONFIG_NEED_DMA_MAP_STATE=y
  CONFIG_NEED_SG_DMA_LENGTH=y
@@ -5250,7 +5212,7 @@ index 4b1081b1cd..6d21a5679e 100644
  CONFIG_OF=y
  CONFIG_OF_ADDRESS=y
  CONFIG_OF_DYNAMIC=y
-@@ -428,6 +519,7 @@ CONFIG_OF_KOBJ=y
+@@ -427,6 +518,7 @@ CONFIG_OF_KOBJ=y
  CONFIG_OF_MDIO=y
  CONFIG_OF_OVERLAY=y
  CONFIG_OF_RESOLVE=y
@@ -5258,7 +5220,7 @@ index 4b1081b1cd..6d21a5679e 100644
  # CONFIG_OVERLAY_FS_XINO_AUTO is not set
  CONFIG_PADATA=y
  CONFIG_PAGE_POOL=y
-@@ -438,11 +530,13 @@ CONFIG_PANIC_ON_OOPS_VALUE=0
+@@ -437,11 +529,13 @@ CONFIG_PANIC_ON_OOPS_VALUE=0
  CONFIG_PANIC_TIMEOUT=0
  # CONFIG_PARTITION_ADVANCED is not set
  CONFIG_PARTITION_PERCPU=y
@@ -5274,7 +5236,7 @@ index 4b1081b1cd..6d21a5679e 100644
  # CONFIG_PCIEASPM_POWERSAVE is not set
  # CONFIG_PCIEASPM_POWER_SUPERSAVE is not set
  CONFIG_PCIEPORTBUS=y
-@@ -454,26 +548,31 @@ CONFIG_PCIE_ROCKCHIP_DW_HOST=y
+@@ -453,26 +547,31 @@ CONFIG_PCIE_ROCKCHIP_DW_HOST=y
  CONFIG_PCIE_ROCKCHIP_HOST=y
  CONFIG_PCI_DOMAINS=y
  CONFIG_PCI_DOMAINS_GENERIC=y
@@ -5310,7 +5272,7 @@ index 4b1081b1cd..6d21a5679e 100644
  CONFIG_PINCTRL=y
  CONFIG_PINCTRL_RK805=y
  CONFIG_PINCTRL_ROCKCHIP=y
-@@ -483,12 +582,16 @@ CONFIG_PLATFORM_MHU=y
+@@ -482,12 +581,16 @@ CONFIG_PLATFORM_MHU=y
  CONFIG_PM=y
  CONFIG_PM_CLK=y
  CONFIG_PM_DEVFREQ=y
@@ -5328,7 +5290,7 @@ index 4b1081b1cd..6d21a5679e 100644
  CONFIG_POWER_SUPPLY=y
  CONFIG_POWER_SUPPLY_HWMON=y
  CONFIG_PPS=y
-@@ -500,6 +603,7 @@ CONFIG_PREEMPT_COUNT=y
+@@ -499,6 +602,7 @@ CONFIG_PREEMPT_COUNT=y
  CONFIG_PREEMPT_RCU=y
  CONFIG_PRINTK_TIME=y
  # CONFIG_PRINT_QUOTA_WARNING is not set
@@ -5336,7 +5298,7 @@ index 4b1081b1cd..6d21a5679e 100644
  CONFIG_PROC_PAGE_MONITOR=y
  CONFIG_PROC_VMCORE=y
  CONFIG_PTP_1588_CLOCK=y
-@@ -525,8 +629,9 @@ CONFIG_REGMAP=y
+@@ -524,8 +628,9 @@ CONFIG_REGMAP=y
  CONFIG_REGMAP_I2C=y
  CONFIG_REGMAP_IRQ=y
  CONFIG_REGMAP_MMIO=y
@@ -5347,7 +5309,7 @@ index 4b1081b1cd..6d21a5679e 100644
  CONFIG_REGULATOR_FAN53555=y
  CONFIG_REGULATOR_FIXED_VOLTAGE=y
  CONFIG_REGULATOR_GPIO=y
-@@ -535,41 +640,61 @@ CONFIG_REGULATOR_RK808=y
+@@ -534,41 +639,61 @@ CONFIG_REGULATOR_RK808=y
  CONFIG_RELOCATABLE=y
  CONFIG_RESET_CONTROLLER=y
  CONFIG_RESET_SCMI=y
@@ -5411,7 +5373,7 @@ index 4b1081b1cd..6d21a5679e 100644
  CONFIG_SERIAL_8250_FSL=y
  CONFIG_SERIAL_8250_NR_UARTS=4
  CONFIG_SERIAL_8250_PCI=y
-@@ -584,9 +709,12 @@ CONFIG_SERIAL_OF_PLATFORM=y
+@@ -583,9 +708,12 @@ CONFIG_SERIAL_OF_PLATFORM=y
  CONFIG_SERIO=y
  CONFIG_SERIO_AMBAKMI=y
  CONFIG_SERIO_LIBPS2=y
@@ -5424,7 +5386,7 @@ index 4b1081b1cd..6d21a5679e 100644
  CONFIG_SOFTIRQ_ON_OWN_STACK=y
  CONFIG_SPARSEMEM=y
  CONFIG_SPARSEMEM_EXTREME=y
-@@ -599,7 +727,7 @@ CONFIG_SPI_DYNAMIC=y
+@@ -598,7 +726,7 @@ CONFIG_SPI_DYNAMIC=y
  CONFIG_SPI_MASTER=y
  CONFIG_SPI_MEM=y
  CONFIG_SPI_ROCKCHIP=y
@@ -5433,7 +5395,7 @@ index 4b1081b1cd..6d21a5679e 100644
  CONFIG_SPI_SPIDEV=y
  # CONFIG_SQUASHFS_DECOMP_MULTI_PERCPU is not set
  CONFIG_SQUASHFS_DECOMP_SINGLE=y
-@@ -608,6 +736,7 @@ CONFIG_SQUASHFS_FILE_CACHE=y
+@@ -607,6 +735,7 @@ CONFIG_SQUASHFS_FILE_CACHE=y
  # CONFIG_SQUASHFS_FILE_DIRECT is not set
  CONFIG_SRAM=y
  CONFIG_SRCU=y
@@ -5441,7 +5403,7 @@ index 4b1081b1cd..6d21a5679e 100644
  CONFIG_STACKPROTECTOR=y
  CONFIG_STACKPROTECTOR_PER_TASK=y
  CONFIG_STACKPROTECTOR_STRONG=y
-@@ -622,6 +751,7 @@ CONFIG_SWPHY=y
+@@ -621,6 +750,7 @@ CONFIG_SWPHY=y
  CONFIG_SYNC_FILE=y
  CONFIG_SYSCTL_EXCEPTION_TRACE=y
  CONFIG_SYSFS_SYSCALL=y
@@ -5449,7 +5411,7 @@ index 4b1081b1cd..6d21a5679e 100644
  # CONFIG_TEXTSEARCH is not set
  CONFIG_THERMAL=y
  CONFIG_THERMAL_DEFAULT_GOV_STEP_WISE=y
-@@ -680,6 +810,8 @@ CONFIG_USB_ULPI_BUS=y
+@@ -679,6 +809,8 @@ CONFIG_USB_ULPI_BUS=y
  CONFIG_USB_ULPI_VIEWPORT=y
  CONFIG_USB_XHCI_HCD=y
  CONFIG_USB_XHCI_PLATFORM=y
@@ -70047,10 +70009,10 @@ index 0000000000..6b948a99fe
 2.40.1
 
 
-From adffb04e2751762e9288faadbefac39492294488 Mon Sep 17 00:00:00 2001
+From 6e6ac51b8c92684b846e9145fd1cb044364b66d1 Mon Sep 17 00:00:00 2001
 From: Marty Jones <mj8263788@gmail.com>
 Date: Sun, 26 Nov 2023 17:36:26 -0500
-Subject: [PATCH 07/37] uboot-rockchip: update to v2024.02-rc1
+Subject: [PATCH 06/37] uboot-rockchip: update to v2024.02-rc1
 
 Signed-off-by: Marty Jones <mj8263788@gmail.com>
 ---
@@ -72946,10 +72908,10 @@ index 0000000000..e54b88848c
 2.40.1
 
 
-From a5af0092345593019ace1665c15606b7a3de3658 Mon Sep 17 00:00:00 2001
+From e131fc4ecfe383eacc0746e3804cd5959bd8712d Mon Sep 17 00:00:00 2001
 From: Marty Jones <mj8263788@gmail.com>
 Date: Mon, 14 Jun 2021 02:47:59 -0400
-Subject: [PATCH 08/37] package: boot: uboot-friendlyarm
+Subject: [PATCH 07/37] package: boot: uboot-friendlyarm
 
 Signed-off-by: Marty Jones <mj8263788@gmail.com>
 ---
@@ -73028,10 +72990,10 @@ index 0000000000..a49f4343f6
 2.40.1
 
 
-From 2d6c15a34400b1796e6d8ea11ed59c5308265c8b Mon Sep 17 00:00:00 2001
+From 7a32797f73eb2d64700d91fd8e1e7d63f7c39e66 Mon Sep 17 00:00:00 2001
 From: Marty Jones <mj8263788@gmail.com>
 Date: Tue, 12 Oct 2021 11:03:59 -0400
-Subject: [PATCH 09/37] rockchip: ROCK Pi 4 switchover ROCK Pi 4B DTS
+Subject: [PATCH 08/37] rockchip: ROCK Pi 4 switchover ROCK Pi 4B DTS
 
 Signed-off-by: Marty Jones <mj8263788@gmail.com>
 ---
@@ -73064,10 +73026,10 @@ index 86e7cec979..d184292e87 100644
 2.40.1
 
 
-From 85c9056d9bf6b3c8a8ea69df0a478e9b00f0952d Mon Sep 17 00:00:00 2001
+From 8e5099fcebf93bb60769f0ae55c1e2453addef85 Mon Sep 17 00:00:00 2001
 From: Marty Jones <mj8263788@gmail.com>
 Date: Fri, 15 Apr 2022 17:02:33 -0400
-Subject: [PATCH 10/37] package:firmware: add RPi-Distro firmware-nonfree
+Subject: [PATCH 09/37] package:firmware: add RPi-Distro firmware-nonfree
 
 Signed-off-by: Marty Jones <mj8263788@gmail.com>
 ---
@@ -73163,10 +73125,10 @@ index 0000000000..6eb04e4af5
 2.40.1
 
 
-From 0f32b0ea976e81930a08d3d5c02a4780ad68d800 Mon Sep 17 00:00:00 2001
+From 33e1798b89c12bfc038f2fe1ac2c4a031e68187a Mon Sep 17 00:00:00 2001
 From: Marty Jones <mj8263788@gmail.com>
 Date: Sun, 31 Jan 2021 14:38:59 -0500
-Subject: [PATCH 11/37] rockchip: enable WiFi on Rock pi 4
+Subject: [PATCH 10/37] rockchip: enable WiFi on Rock pi 4
 
 Signed-off-by: Marty Jones <mj8263788@gmail.com>
 ---
@@ -73191,10 +73153,10 @@ index d184292e87..5818cf9947 100644
 2.40.1
 
 
-From 52d27ff5f168290faa5c485442e1f035039e0695 Mon Sep 17 00:00:00 2001
+From c6993c226861020882d4b75167bafe48deb7608a Mon Sep 17 00:00:00 2001
 From: Marty Jones <mj8263788@gmail.com>
 Date: Thu, 23 Dec 2021 20:53:14 -0500
-Subject: [PATCH 12/37] rockchip:rk3328: add support for FriendlyARM NanoPi
+Subject: [PATCH 11/37] rockchip:rk3328: add support for FriendlyARM NanoPi
  NEO3
 
 This patch adds support for FriendlyARM NanoPi NEO3
@@ -73256,10 +73218,10 @@ index 5818cf9947..a3c927bb36 100644
 2.40.1
 
 
-From c201564bd6ac32a0eed44dae07f8df41c21fa58a Mon Sep 17 00:00:00 2001
+From 45318e2681263c7952b6b58ac47386f3d7405f17 Mon Sep 17 00:00:00 2001
 From: Marty Jones <mj8263788@gmail.com>
 Date: Mon, 9 May 2022 23:52:50 -0400
-Subject: [PATCH 13/37] rockchip: add support for Pine64 QUARTZ64 RK3566
+Subject: [PATCH 12/37] rockchip: add support for Pine64 QUARTZ64 RK3566
 
 Signed-off-by: Marty Jones <mj8263788@gmail.com>
 ---
@@ -73339,10 +73301,10 @@ index 0000000000..6deafd70c1
 2.40.1
 
 
-From 329f664477eb3a933e826843abd0b55a62c28417 Mon Sep 17 00:00:00 2001
+From 65a349c82f869be2cc34e60c030f6e891b6376db Mon Sep 17 00:00:00 2001
 From: Marty Jones <mj8263788@gmail.com>
 Date: Tue, 21 Jun 2022 13:32:29 -0400
-Subject: [PATCH 14/37] rockchip: add Banana Pi BPI-R2 Pro support
+Subject: [PATCH 13/37] rockchip: add Banana Pi BPI-R2 Pro support
 
 Signed-off-by: Marty Jones <mj8263788@gmail.com>
 ---
@@ -73386,10 +73348,10 @@ index c0f8420956..0805d4d4fa 100644
 2.40.1
 
 
-From 1e42010c4656fcffb4766abab0c2160bfbda1e65 Mon Sep 17 00:00:00 2001
+From 78e62d5b2c55a2f862758c3ace76ae1e23698641 Mon Sep 17 00:00:00 2001
 From: Malcolm Morris-Pence <malcolmmp@gmail.com>
 Date: Thu, 4 Aug 2022 16:01:43 -0700
-Subject: [PATCH 15/37] Update r2pro network
+Subject: [PATCH 14/37] Update r2pro network
 
 Signed-off-by: Marty Jones <mj8263788@gmail.com>
 ---
@@ -73413,10 +73375,10 @@ index 8d9ce9285a..3156842081 100644
 2.40.1
 
 
-From 480c14cc9ea83f3f70bb68160a61e16f6ad6bf6d Mon Sep 17 00:00:00 2001
+From 73bd42fcc85d0ab3f6f8fc3ffee672e3a54767a3 Mon Sep 17 00:00:00 2001
 From: Marty Jones <mj8263788@gmail.com>
 Date: Tue, 21 Jun 2022 17:27:17 -0400
-Subject: [PATCH 16/37] rockchip: add Radxa ROCK3 Model A board.
+Subject: [PATCH 15/37] rockchip: add Radxa ROCK3 Model A board.
 
 Signed-off-by: Marty Jones <mj8263788@gmail.com>
 ---
@@ -73494,10 +73456,10 @@ index 0000000000..6deafd70c1
 2.40.1
 
 
-From 386459db17e44fd66889c2cbc58c1d51a21e7fe1 Mon Sep 17 00:00:00 2001
+From 1e509ee86042d0e16d5a3d205bd2ca6d87332b95 Mon Sep 17 00:00:00 2001
 From: Marty Jones <mj8263788@gmail.com>
 Date: Sun, 31 Jul 2022 02:49:49 -0400
-Subject: [PATCH 17/37] rockchip: add FriendlyElec NanoPi R5S
+Subject: [PATCH 16/37] rockchip: add FriendlyElec NanoPi R5S
 
 Signed-off-by: Marty Jones <mj8263788@gmail.com>
 ---
@@ -73593,10 +73555,10 @@ index 0000000000..6deafd70c1
 2.40.1
 
 
-From 4c94d3990b7c123797cb613ecac4dcfebb0ccde7 Mon Sep 17 00:00:00 2001
+From bb0cf3392e5e65b3f42c45faac1efe069f860352 Mon Sep 17 00:00:00 2001
 From: Marty Jones <mj8263788@gmail.com>
 Date: Sun, 21 Aug 2022 04:34:20 -0400
-Subject: [PATCH 18/37] rockchip: bpi r2 pro enable board leds
+Subject: [PATCH 17/37] rockchip: bpi r2 pro enable board leds
 
 Signed-off-by: Marty Jones <mj8263788@gmail.com>
 ---
@@ -73622,10 +73584,10 @@ index e31e56200f..a0e25079be 100644
 2.40.1
 
 
-From 323d7e34d4aea11207fde7558094b479c2ae1021 Mon Sep 17 00:00:00 2001
+From 164aa72bfa980ea22af6f34b11ad390057a215be Mon Sep 17 00:00:00 2001
 From: Marty Jones <mj8263788@gmail.com>
 Date: Sat, 10 Sep 2022 11:45:10 -0400
-Subject: [PATCH 19/37] rockchip: generate MAC address for bpi r2 pro nanopi
+Subject: [PATCH 18/37] rockchip: generate MAC address for bpi r2 pro nanopi
  r5s
 
 Signed-off-by: Marty Jones <mj8263788@gmail.com>
@@ -73682,10 +73644,10 @@ index 7b78c899a0..a9f5b6fa8d 100644
 2.40.1
 
 
-From 4c55de51a6b1e6d9b4509379d2f4835ff04c1d6e Mon Sep 17 00:00:00 2001
+From dd0cde92be7bbe32e0d3237b0cb12893e06f9148 Mon Sep 17 00:00:00 2001
 From: Marty Jones <mj8263788@gmail.com>
 Date: Wed, 19 Apr 2023 20:38:06 -0400
-Subject: [PATCH 20/37] rockchip: add nanopi r5c
+Subject: [PATCH 19/37] rockchip: add nanopi r5c
 
 Signed-off-by: Marty Jones <mj8263788@gmail.com>
 ---
@@ -73773,10 +73735,10 @@ index 140511f078..e7fdeb0ed3 100644
 2.40.1
 
 
-From 1a5366046e43ee4735f724f4251ab7c27c542d80 Mon Sep 17 00:00:00 2001
+From 7ba222f9081427dec43718348d7d702c75cdc54f Mon Sep 17 00:00:00 2001
 From: User Github <974715732+user@users.noreply.github.com>
 Date: Fri, 16 Sep 2022 02:44:11 -0400
-Subject: [PATCH 21/37] wireless-regdb: update
+Subject: [PATCH 20/37] wireless-regdb: update
 
 Signed-off-by: Marty Jones <mj8263788@gmail.com>
 ---
@@ -73821,10 +73783,10 @@ index 3f6d4c7e8d..8270ebc909 100644
 2.40.1
 
 
-From d65701f5cf256760c80db039c18fe11d462e9924 Mon Sep 17 00:00:00 2001
+From 53aa85550b0e82d4dd1ae6b017e85db14cdbc663 Mon Sep 17 00:00:00 2001
 From: Marty Jones <mj8263788@gmail.com>
 Date: Fri, 20 Jan 2023 20:57:00 -0500
-Subject: [PATCH 22/37] iwinfo: add hardware id for MT7922 devices
+Subject: [PATCH 21/37] iwinfo: add hardware id for MT7922 devices
 
 Signed-off-by: Marty Jones <mj8263788@gmail.com>
 ---
@@ -73867,10 +73829,10 @@ index 0000000000..56cfedfef2
 2.40.1
 
 
-From 480729a095960560992607cad4f4e748864f8f92 Mon Sep 17 00:00:00 2001
+From b01e2c74b59a27491da5f66668a878ee2af5120e Mon Sep 17 00:00:00 2001
 From: Marty Jones <mj8263788@gmail.com>
 Date: Fri, 15 Sep 2023 01:24:29 -0400
-Subject: [PATCH 23/37] kernel: add rtl8812au-ac driver
+Subject: [PATCH 22/37] kernel: add rtl8812au-ac driver
 
 Signed-off-by: Marty Jones <mj8263788@gmail.com>
 ---
@@ -74105,10 +74067,10 @@ index 0000000000..9cd30a061e
 2.40.1
 
 
-From 97be1181d4c74ba365a59102fdbdabe3409dce2f Mon Sep 17 00:00:00 2001
+From eaab88bd8b1db6adeeaa1dc8cb681b5a2c5a677b Mon Sep 17 00:00:00 2001
 From: Marty Jones <mj8263788@gmail.com>
 Date: Sat, 28 Jan 2023 23:41:44 -0500
-Subject: [PATCH 24/37] iwinfo: add rtl8812/14/21au devices
+Subject: [PATCH 23/37] iwinfo: add rtl8812/14/21au devices
 
 Signed-off-by: Marty Jones <mj8263788@gmail.com>
 ---
@@ -74212,10 +74174,10 @@ index 0000000000..43feb6412b
 2.40.1
 
 
-From 984ad892659f5b707fc2e34062ef3d913b5f6700 Mon Sep 17 00:00:00 2001
+From 8f6b9ea3ca16cc91060ffb5ece322e9d091e6a43 Mon Sep 17 00:00:00 2001
 From: Marty Jones <mj8263788@gmail.com>
 Date: Thu, 23 Feb 2023 19:04:52 -0500
-Subject: [PATCH 25/37] linux-firmware: add realtek bluetooth
+Subject: [PATCH 24/37] linux-firmware: add realtek bluetooth
 
 Signed-off-by: Marty Jones <mj8263788@gmail.com>
 ---
@@ -74247,10 +74209,10 @@ index b4880b6a7f..8329f36f91 100644
 2.40.1
 
 
-From 06182dd307174fe02a9fff3779c4feed1626dc80 Mon Sep 17 00:00:00 2001
+From 69188efc7b8ec02d2548ef682e60707daeac9f54 Mon Sep 17 00:00:00 2001
 From: Marty Jones <mj8263788@gmail.com>
 Date: Tue, 14 Nov 2023 00:41:15 -0500
-Subject: [PATCH 26/37] mac80211: add realtek rtw89 driver
+Subject: [PATCH 25/37] mac80211: add realtek rtw89 driver
 
 Signed-off-by: Marty Jones <mj8263788@gmail.com>
 ---
@@ -74328,10 +74290,10 @@ index 04057b3106..40af2f0f4a 100644
 2.40.1
 
 
-From 2255b83f4d9245ca552cd104b7d7d9dc3cf2369f Mon Sep 17 00:00:00 2001
+From d5af068b2e8525cc003115e6a04f78e34a71ec25 Mon Sep 17 00:00:00 2001
 From: Marty Jones <mj8263788@gmail.com>
 Date: Tue, 7 Mar 2023 16:58:59 -0500
-Subject: [PATCH 27/37] iwinfo: add rtl8852ae
+Subject: [PATCH 26/37] iwinfo: add rtl8852ae
 
 Signed-off-by: Marty Jones <mj8263788@gmail.com>
 ---
@@ -74359,10 +74321,10 @@ index 0000000000..70aaed4146
 2.40.1
 
 
-From fa6d4e0b78ee2d79a0e670b56bd81af65ebf58c7 Mon Sep 17 00:00:00 2001
+From 2bee66f231ae79a96c5c5bc0e13a6348f8440c4b Mon Sep 17 00:00:00 2001
 From: Marty Jones <mj8263788@gmail.com>
 Date: Tue, 25 Jul 2023 12:19:46 -0400
-Subject: [PATCH 28/37] iwinfo:devices: add device id for TP-Link T3u Plus
+Subject: [PATCH 27/37] iwinfo:devices: add device id for TP-Link T3u Plus
 
 Signed-off-by: Marty Jones <mj8263788@gmail.com>
 ---
@@ -74401,10 +74363,10 @@ index 0000000000..51a0d274c0
 2.40.1
 
 
-From be397da7e1e652d97b57925a16f1148a33c0511c Mon Sep 17 00:00:00 2001
+From b40f1e4f547c33a3c1cb5406a4941fb9fee6b1ba Mon Sep 17 00:00:00 2001
 From: Marty Jones <mj8263788@gmail.com>
 Date: Sun, 25 Jun 2023 17:38:27 -0400
-Subject: [PATCH 29/37] arm-trusted-firmware-rockchip: update to v2.9.0
+Subject: [PATCH 28/37] arm-trusted-firmware-rockchip: update to v2.9.0
 
 Signed-off-by: Marty Jones <mj8263788@gmail.com>
 ---
@@ -74511,10 +74473,10 @@ index aaae4ce392..af24b8ddde 100644
 2.40.1
 
 
-From f787dba8b984195ac31a40ced2aefede556170c3 Mon Sep 17 00:00:00 2001
+From b8639dd3f19fc5b15ee03beebbb79e1cddcd3188 Mon Sep 17 00:00:00 2001
 From: Marty Jones <mj8263788@gmail.com>
 Date: Thu, 27 Apr 2023 21:08:38 -0400
-Subject: [PATCH 30/37] rockchip: add FriendlyElec NanoPi R6C
+Subject: [PATCH 29/37] rockchip: add FriendlyElec NanoPi R6C
 
 Signed-off-by: Marty Jones <mj8263788@gmail.com>
 ---
@@ -74627,10 +74589,10 @@ index 0000000000..17d9b68059
 2.40.1
 
 
-From f0673b751f69edb0501bcbfa8ebc3490fbcc9175 Mon Sep 17 00:00:00 2001
+From 8ab389edc0f1d94e310020b9867fb50d874f5e71 Mon Sep 17 00:00:00 2001
 From: Marty Jones <mj8263788@gmail.com>
 Date: Thu, 27 Apr 2023 22:08:42 -0400
-Subject: [PATCH 31/37] rockchip: add FriendlyElec NanoPi R6S
+Subject: [PATCH 30/37] rockchip: add FriendlyElec NanoPi R6S
 
 Signed-off-by: Marty Jones <mj8263788@gmail.com>
 ---
@@ -74719,10 +74681,10 @@ index 93ac90dafe..6a49307389 100644
 2.40.1
 
 
-From 4b650f606e306032f404c25eeee5fea06821eb77 Mon Sep 17 00:00:00 2001
+From f851238a90a9fdca61c2cf85013905761877ad48 Mon Sep 17 00:00:00 2001
 From: Marty Jones <mj8263788@gmail.com>
 Date: Tue, 13 Jun 2023 02:51:51 -0400
-Subject: [PATCH 32/37] rockchip: add FriendlyElec NanoPi R6C Plus
+Subject: [PATCH 31/37] rockchip: add FriendlyElec NanoPi R6C Plus
 
 Signed-off-by: Marty Jones <mj8263788@gmail.com>
 ---
@@ -74812,10 +74774,10 @@ index 6a49307389..31d10f5fa8 100644
 2.40.1
 
 
-From 10cafc168c61f2dddf61e5f1ae79cd93193e331f Mon Sep 17 00:00:00 2001
+From 2c04fe6d9770a08cc7e26f7dc858331d2f70f22b Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Matt=20Marjanovi=C4=87?= <maddog@mir.com>
 Date: Tue, 27 Jun 2023 13:52:51 -0700
-Subject: [PATCH 33/37] rockchip: Fix port/LED order on NanoPi R6S
+Subject: [PATCH 32/37] rockchip: Fix port/LED order on NanoPi R6S
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -74884,10 +74846,10 @@ index ad45ded9a7..2cf141aad0 100644
 2.40.1
 
 
-From bb4492e7e973211300e9553e0e63567293988580 Mon Sep 17 00:00:00 2001
+From fbdcb98c4469ebef3db6f9ed878b7a74a454e822 Mon Sep 17 00:00:00 2001
 From: Marty Jones <mj8263788@gmail.com>
 Date: Mon, 16 Oct 2023 10:29:55 -0400
-Subject: [PATCH 34/37] rockchip: add orange pi 5 plus
+Subject: [PATCH 33/37] rockchip: add orange pi 5 plus
 
 Signed-off-by: Marty Jones <mj8263788@gmail.com>
 ---
@@ -75954,10 +75916,10 @@ index 31d10f5fa8..1f3a278474 100644
 2.40.1
 
 
-From f6ef4618748bf85940defd13034c80c1bb17b187 Mon Sep 17 00:00:00 2001
+From 58bd52e22812d36a5d8b9f33efbefa24c9c1f9b3 Mon Sep 17 00:00:00 2001
 From: Marty Jones <mj8263788@gmail.com>
 Date: Tue, 5 Dec 2023 22:17:41 -0500
-Subject: [PATCH 35/37] uboot-rockchip: update to 2024.1
+Subject: [PATCH 34/37] uboot-rockchip: update to 2024.1
 
 Signed-off-by: Marty Jones <mj8263788@gmail.com>
 ---
@@ -76012,181 +75974,10 @@ index e54b88848c..02f2eec9e0 100644
 2.40.1
 
 
-From fa3465fe6dd172804965fdba03050b0260b7a2ad Mon Sep 17 00:00:00 2001
-From: Marty Jones <mj8263788@gmail.com>
-Date: Mon, 8 Jan 2024 13:30:01 -0500
-Subject: [PATCH 36/37] kernel: Linux 6.1.72
-
-https://lore.kernel.org/r/20240108153511.214254205@linuxfoundation.org
----
- include/kernel-6.1                                          | 4 ++--
- ...707-v6.3-net-pcs-add-driver-for-MediaTek-SGMII-PCS.patch | 2 +-
- ...0010-net-dsa-mt7530-introduce-separate-MDIO-driver.patch | 2 +-
- ...t-dsa-mt7530-introduce-driver-for-MT7988-built-in-.patch | 2 +-
- ...y-Add-driver-for-Motorcomm-yt8521-gigabit-ethernet.patch | 2 +-
- .../hack-6.1/650-netfilter-add-xt_FLOWOFFLOAD-target.patch  | 6 +++---
- target/linux/generic/hack-6.1/901-debloat_sock_diag.patch   | 2 +-
- target/linux/generic/hack-6.1/902-debloat_proc.patch        | 2 +-
- ...tfilter-nft_flow_offload-handle-netdevice-events-f.patch | 6 +++---
- 9 files changed, 14 insertions(+), 14 deletions(-)
-
-diff --git a/include/kernel-6.1 b/include/kernel-6.1
-index c52b94712f..836cecf7de 100644
---- a/include/kernel-6.1
-+++ b/include/kernel-6.1
-@@ -1,2 +1,2 @@
--LINUX_VERSION-6.1 = .71
--LINUX_KERNEL_HASH-6.1.71 = 2df774dd53f9ffd4e57ebf804cf597709295df6a304fe261d25220a134b7f041
-+LINUX_VERSION-6.1 = .72
-+LINUX_KERNEL_HASH-6.1.72 = 98dce69077c35cffca799dcdbbd32a02242aad6b0950eb931936bb2ef69f0926
-diff --git a/target/linux/generic/backport-6.1/707-v6.3-net-pcs-add-driver-for-MediaTek-SGMII-PCS.patch b/target/linux/generic/backport-6.1/707-v6.3-net-pcs-add-driver-for-MediaTek-SGMII-PCS.patch
-index 980cb0f914..d56a142451 100644
---- a/target/linux/generic/backport-6.1/707-v6.3-net-pcs-add-driver-for-MediaTek-SGMII-PCS.patch
-+++ b/target/linux/generic/backport-6.1/707-v6.3-net-pcs-add-driver-for-MediaTek-SGMII-PCS.patch
-@@ -32,7 +32,7 @@ Signed-off-by: Jakub Kicinski <kuba@kernel.org>
- 
- --- a/MAINTAINERS
- +++ b/MAINTAINERS
--@@ -12926,6 +12926,14 @@ L:	netdev@vger.kernel.org
-+@@ -12928,6 +12928,14 @@ L:	netdev@vger.kernel.org
-  S:	Maintained
-  F:	drivers/net/ethernet/mediatek/
-  
-diff --git a/target/linux/generic/backport-6.1/790-v6.4-0010-net-dsa-mt7530-introduce-separate-MDIO-driver.patch b/target/linux/generic/backport-6.1/790-v6.4-0010-net-dsa-mt7530-introduce-separate-MDIO-driver.patch
-index b75710ba57..d203711884 100644
---- a/target/linux/generic/backport-6.1/790-v6.4-0010-net-dsa-mt7530-introduce-separate-MDIO-driver.patch
-+++ b/target/linux/generic/backport-6.1/790-v6.4-0010-net-dsa-mt7530-introduce-separate-MDIO-driver.patch
-@@ -25,7 +25,7 @@ Signed-off-by: David S. Miller <davem@davemloft.net>
- 
- --- a/MAINTAINERS
- +++ b/MAINTAINERS
--@@ -13060,6 +13060,7 @@ M:	Landen Chao <Landen.Chao@mediatek.com
-+@@ -13062,6 +13062,7 @@ M:	Landen Chao <Landen.Chao@mediatek.com
-  M:	DENG Qingfang <dqfext@gmail.com>
-  L:	netdev@vger.kernel.org
-  S:	Maintained
-diff --git a/target/linux/generic/backport-6.1/790-v6.4-0012-net-dsa-mt7530-introduce-driver-for-MT7988-built-in-.patch b/target/linux/generic/backport-6.1/790-v6.4-0012-net-dsa-mt7530-introduce-driver-for-MT7988-built-in-.patch
-index 934af995cd..63bf0e77fa 100644
---- a/target/linux/generic/backport-6.1/790-v6.4-0012-net-dsa-mt7530-introduce-driver-for-MT7988-built-in-.patch
-+++ b/target/linux/generic/backport-6.1/790-v6.4-0012-net-dsa-mt7530-introduce-driver-for-MT7988-built-in-.patch
-@@ -28,7 +28,7 @@ Signed-off-by: David S. Miller <davem@davemloft.net>
- 
- --- a/MAINTAINERS
- +++ b/MAINTAINERS
--@@ -13058,9 +13058,11 @@ MEDIATEK SWITCH DRIVER
-+@@ -13060,9 +13060,11 @@ MEDIATEK SWITCH DRIVER
-  M:	Sean Wang <sean.wang@mediatek.com>
-  M:	Landen Chao <Landen.Chao@mediatek.com>
-  M:	DENG Qingfang <dqfext@gmail.com>
-diff --git a/target/linux/generic/backport-6.1/791-v6.2-01-net-phy-Add-driver-for-Motorcomm-yt8521-gigabit-ethernet.patch b/target/linux/generic/backport-6.1/791-v6.2-01-net-phy-Add-driver-for-Motorcomm-yt8521-gigabit-ethernet.patch
-index 06dddffcaa..4cdd67cdcc 100644
---- a/target/linux/generic/backport-6.1/791-v6.2-01-net-phy-Add-driver-for-Motorcomm-yt8521-gigabit-ethernet.patch
-+++ b/target/linux/generic/backport-6.1/791-v6.2-01-net-phy-Add-driver-for-Motorcomm-yt8521-gigabit-ethernet.patch
-@@ -21,7 +21,7 @@ Signed-off-by: David S. Miller <davem@davemloft.net>
- 
- --- a/MAINTAINERS
- +++ b/MAINTAINERS
--@@ -13962,6 +13962,7 @@ F:	include/uapi/linux/meye.h
-+@@ -13964,6 +13964,7 @@ F:	include/uapi/linux/meye.h
-  
-  MOTORCOMM PHY DRIVER
-  M:	Peter Geis <pgwipeout@gmail.com>
-diff --git a/target/linux/generic/hack-6.1/650-netfilter-add-xt_FLOWOFFLOAD-target.patch b/target/linux/generic/hack-6.1/650-netfilter-add-xt_FLOWOFFLOAD-target.patch
-index 386291bfe8..9ff45a414e 100644
---- a/target/linux/generic/hack-6.1/650-netfilter-add-xt_FLOWOFFLOAD-target.patch
-+++ b/target/linux/generic/hack-6.1/650-netfilter-add-xt_FLOWOFFLOAD-target.patch
-@@ -654,7 +654,7 @@ Signed-off-by: Felix Fietkau <nbd@nbd.name>
- +};
- +
- +static int nf_flow_rule_route_inet(struct net *net,
--+				   const struct flow_offload *flow,
-++				   struct flow_offload *flow,
- +				   enum flow_offload_tuple_dir dir,
- +				   struct nf_flow_rule *flow_rule)
- +{
-@@ -755,7 +755,7 @@ Signed-off-by: Felix Fietkau <nbd@nbd.name>
-  		      void (*iter)(struct nf_flowtable *flowtable,
-  				   struct flow_offload *flow, void *data),
-  		      void *data)
--@@ -436,6 +434,7 @@ static void nf_flow_offload_gc_step(stru
-+@@ -443,6 +441,7 @@ static void nf_flow_offload_gc_step(stru
-  		nf_flow_offload_stats(flow_table, flow);
-  	}
-  }
-@@ -785,7 +785,7 @@ Signed-off-by: Felix Fietkau <nbd@nbd.name>
- +#endif /* _XT_FLOWOFFLOAD_H */
- --- a/include/net/netfilter/nf_flow_table.h
- +++ b/include/net/netfilter/nf_flow_table.h
--@@ -280,6 +280,11 @@ void nf_flow_table_free(struct nf_flowta
-+@@ -293,6 +293,11 @@ void nf_flow_table_free(struct nf_flowta
-  
-  void flow_offload_teardown(struct flow_offload *flow);
-  
-diff --git a/target/linux/generic/hack-6.1/901-debloat_sock_diag.patch b/target/linux/generic/hack-6.1/901-debloat_sock_diag.patch
-index b4403e82c8..ffa6e8ac60 100644
---- a/target/linux/generic/hack-6.1/901-debloat_sock_diag.patch
-+++ b/target/linux/generic/hack-6.1/901-debloat_sock_diag.patch
-@@ -79,7 +79,7 @@ Signed-off-by: Felix Fietkau <nbd@nbd.name>
-  INDIRECT_CALLABLE_DECLARE(struct dst_entry *ip6_dst_check(struct dst_entry *,
-  							  u32));
-  INDIRECT_CALLABLE_DECLARE(struct dst_entry *ipv4_dst_check(struct dst_entry *,
--@@ -2180,9 +2194,11 @@ static void __sk_free(struct sock *sk)
-+@@ -2187,9 +2201,11 @@ static void __sk_free(struct sock *sk)
-  	if (likely(sk->sk_net_refcnt))
-  		sock_inuse_add(sock_net(sk), -1);
-  
-diff --git a/target/linux/generic/hack-6.1/902-debloat_proc.patch b/target/linux/generic/hack-6.1/902-debloat_proc.patch
-index a5db9b21c1..0d844994aa 100644
---- a/target/linux/generic/hack-6.1/902-debloat_proc.patch
-+++ b/target/linux/generic/hack-6.1/902-debloat_proc.patch
-@@ -330,7 +330,7 @@ Signed-off-by: Felix Fietkau <nbd@nbd.name>
-  
- --- a/net/core/sock.c
- +++ b/net/core/sock.c
--@@ -4105,6 +4105,8 @@ static __net_initdata struct pernet_oper
-+@@ -4113,6 +4113,8 @@ static __net_initdata struct pernet_oper
-  
-  static int __init proto_init(void)
-  {
-diff --git a/target/linux/generic/pending-6.1/700-netfilter-nft_flow_offload-handle-netdevice-events-f.patch b/target/linux/generic/pending-6.1/700-netfilter-nft_flow_offload-handle-netdevice-events-f.patch
-index 6050db3f5b..47c742cff0 100644
---- a/target/linux/generic/pending-6.1/700-netfilter-nft_flow_offload-handle-netdevice-events-f.patch
-+++ b/target/linux/generic/pending-6.1/700-netfilter-nft_flow_offload-handle-netdevice-events-f.patch
-@@ -10,7 +10,7 @@ Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
- 
- --- a/net/netfilter/nf_flow_table_core.c
- +++ b/net/netfilter/nf_flow_table_core.c
--@@ -659,6 +659,23 @@ static struct pernet_operations nf_flow_
-+@@ -666,6 +666,23 @@ static struct pernet_operations nf_flow_
-  	.exit_batch = nf_flow_table_pernet_exit,
-  };
-  
-@@ -34,7 +34,7 @@ Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-  static int __init nf_flow_table_module_init(void)
-  {
-  	int ret;
--@@ -671,8 +688,14 @@ static int __init nf_flow_table_module_i
-+@@ -678,8 +695,14 @@ static int __init nf_flow_table_module_i
-  	if (ret)
-  		goto out_offload;
-  
-@@ -49,7 +49,7 @@ Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-  out_offload:
-  	unregister_pernet_subsys(&nf_flow_table_net_ops);
-  	return ret;
--@@ -680,6 +703,7 @@ out_offload:
-+@@ -687,6 +710,7 @@ out_offload:
-  
-  static void __exit nf_flow_table_module_exit(void)
-  {
--- 
-2.40.1
-
-
-From c0c8fd55ed52b70b1a8f18168438afa8955abec9 Mon Sep 17 00:00:00 2001
+From 08814561a3f0aae2f9e93265c93f6a634330a5e8 Mon Sep 17 00:00:00 2001
 From: Marty Jones <mj8263788@gmail.com>
 Date: Mon, 8 Jan 2024 14:48:14 -0500
-Subject: [PATCH 37/37] kernel: r8152: sync with linux-next
+Subject: [PATCH 35/37] kernel: r8152: sync with linux-next
 
 Signed-off-by: Marty Jones <mj8263788@gmail.com>
 ---
@@ -76588,6 +76379,290 @@ index 0000000000..a9ba2b5b4a
 + }
 + 
 + static void dwc2_set_amcc_params(struct dwc2_hsotg *hsotg)
+-- 
+2.40.1
+
+
+From 1626d2a4a42a0144b132c4aff3e015f0e3a39688 Mon Sep 17 00:00:00 2001
+From: Marty Jones <mj8263788@gmail.com>
+Date: Mon, 15 Jan 2024 14:19:37 -0500
+Subject: [PATCH 36/37] kernel: Linux 6.1.72
+
+https://lore.kernel.org/r/20240108153511.214254205@linuxfoundation.org
+
+Signed-off-by: Marty Jones <mj8263788@gmail.com>
+---
+ include/kernel-6.1                                          | 4 ++--
+ ...723-v6.3-net-pcs-add-driver-for-MediaTek-SGMII-PCS.patch | 2 +-
+ ...0010-net-dsa-mt7530-introduce-separate-MDIO-driver.patch | 2 +-
+ ...t-dsa-mt7530-introduce-driver-for-MT7988-built-in-.patch | 2 +-
+ ...y-Add-driver-for-Motorcomm-yt8521-gigabit-ethernet.patch | 2 +-
+ .../hack-6.1/650-netfilter-add-xt_FLOWOFFLOAD-target.patch  | 6 +++---
+ target/linux/generic/hack-6.1/901-debloat_sock_diag.patch   | 2 +-
+ target/linux/generic/hack-6.1/902-debloat_proc.patch        | 2 +-
+ ...tfilter-nft_flow_offload-handle-netdevice-events-f.patch | 6 +++---
+ 9 files changed, 14 insertions(+), 14 deletions(-)
+
+diff --git a/include/kernel-6.1 b/include/kernel-6.1
+index c52b94712f..836cecf7de 100644
+--- a/include/kernel-6.1
++++ b/include/kernel-6.1
+@@ -1,2 +1,2 @@
+-LINUX_VERSION-6.1 = .71
+-LINUX_KERNEL_HASH-6.1.71 = 2df774dd53f9ffd4e57ebf804cf597709295df6a304fe261d25220a134b7f041
++LINUX_VERSION-6.1 = .72
++LINUX_KERNEL_HASH-6.1.72 = 98dce69077c35cffca799dcdbbd32a02242aad6b0950eb931936bb2ef69f0926
+diff --git a/target/linux/generic/backport-6.1/723-v6.3-net-pcs-add-driver-for-MediaTek-SGMII-PCS.patch b/target/linux/generic/backport-6.1/723-v6.3-net-pcs-add-driver-for-MediaTek-SGMII-PCS.patch
+index 980cb0f914..d56a142451 100644
+--- a/target/linux/generic/backport-6.1/723-v6.3-net-pcs-add-driver-for-MediaTek-SGMII-PCS.patch
++++ b/target/linux/generic/backport-6.1/723-v6.3-net-pcs-add-driver-for-MediaTek-SGMII-PCS.patch
+@@ -32,7 +32,7 @@ Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+ 
+ --- a/MAINTAINERS
+ +++ b/MAINTAINERS
+-@@ -12926,6 +12926,14 @@ L:	netdev@vger.kernel.org
++@@ -12928,6 +12928,14 @@ L:	netdev@vger.kernel.org
+  S:	Maintained
+  F:	drivers/net/ethernet/mediatek/
+  
+diff --git a/target/linux/generic/backport-6.1/790-v6.4-0010-net-dsa-mt7530-introduce-separate-MDIO-driver.patch b/target/linux/generic/backport-6.1/790-v6.4-0010-net-dsa-mt7530-introduce-separate-MDIO-driver.patch
+index b75710ba57..d203711884 100644
+--- a/target/linux/generic/backport-6.1/790-v6.4-0010-net-dsa-mt7530-introduce-separate-MDIO-driver.patch
++++ b/target/linux/generic/backport-6.1/790-v6.4-0010-net-dsa-mt7530-introduce-separate-MDIO-driver.patch
+@@ -25,7 +25,7 @@ Signed-off-by: David S. Miller <davem@davemloft.net>
+ 
+ --- a/MAINTAINERS
+ +++ b/MAINTAINERS
+-@@ -13060,6 +13060,7 @@ M:	Landen Chao <Landen.Chao@mediatek.com
++@@ -13062,6 +13062,7 @@ M:	Landen Chao <Landen.Chao@mediatek.com
+  M:	DENG Qingfang <dqfext@gmail.com>
+  L:	netdev@vger.kernel.org
+  S:	Maintained
+diff --git a/target/linux/generic/backport-6.1/790-v6.4-0012-net-dsa-mt7530-introduce-driver-for-MT7988-built-in-.patch b/target/linux/generic/backport-6.1/790-v6.4-0012-net-dsa-mt7530-introduce-driver-for-MT7988-built-in-.patch
+index 934af995cd..63bf0e77fa 100644
+--- a/target/linux/generic/backport-6.1/790-v6.4-0012-net-dsa-mt7530-introduce-driver-for-MT7988-built-in-.patch
++++ b/target/linux/generic/backport-6.1/790-v6.4-0012-net-dsa-mt7530-introduce-driver-for-MT7988-built-in-.patch
+@@ -28,7 +28,7 @@ Signed-off-by: David S. Miller <davem@davemloft.net>
+ 
+ --- a/MAINTAINERS
+ +++ b/MAINTAINERS
+-@@ -13058,9 +13058,11 @@ MEDIATEK SWITCH DRIVER
++@@ -13060,9 +13060,11 @@ MEDIATEK SWITCH DRIVER
+  M:	Sean Wang <sean.wang@mediatek.com>
+  M:	Landen Chao <Landen.Chao@mediatek.com>
+  M:	DENG Qingfang <dqfext@gmail.com>
+diff --git a/target/linux/generic/backport-6.1/791-v6.2-01-net-phy-Add-driver-for-Motorcomm-yt8521-gigabit-ethernet.patch b/target/linux/generic/backport-6.1/791-v6.2-01-net-phy-Add-driver-for-Motorcomm-yt8521-gigabit-ethernet.patch
+index 06dddffcaa..4cdd67cdcc 100644
+--- a/target/linux/generic/backport-6.1/791-v6.2-01-net-phy-Add-driver-for-Motorcomm-yt8521-gigabit-ethernet.patch
++++ b/target/linux/generic/backport-6.1/791-v6.2-01-net-phy-Add-driver-for-Motorcomm-yt8521-gigabit-ethernet.patch
+@@ -21,7 +21,7 @@ Signed-off-by: David S. Miller <davem@davemloft.net>
+ 
+ --- a/MAINTAINERS
+ +++ b/MAINTAINERS
+-@@ -13962,6 +13962,7 @@ F:	include/uapi/linux/meye.h
++@@ -13964,6 +13964,7 @@ F:	include/uapi/linux/meye.h
+  
+  MOTORCOMM PHY DRIVER
+  M:	Peter Geis <pgwipeout@gmail.com>
+diff --git a/target/linux/generic/hack-6.1/650-netfilter-add-xt_FLOWOFFLOAD-target.patch b/target/linux/generic/hack-6.1/650-netfilter-add-xt_FLOWOFFLOAD-target.patch
+index 386291bfe8..9ff45a414e 100644
+--- a/target/linux/generic/hack-6.1/650-netfilter-add-xt_FLOWOFFLOAD-target.patch
++++ b/target/linux/generic/hack-6.1/650-netfilter-add-xt_FLOWOFFLOAD-target.patch
+@@ -654,7 +654,7 @@ Signed-off-by: Felix Fietkau <nbd@nbd.name>
+ +};
+ +
+ +static int nf_flow_rule_route_inet(struct net *net,
+-+				   const struct flow_offload *flow,
+++				   struct flow_offload *flow,
+ +				   enum flow_offload_tuple_dir dir,
+ +				   struct nf_flow_rule *flow_rule)
+ +{
+@@ -755,7 +755,7 @@ Signed-off-by: Felix Fietkau <nbd@nbd.name>
+  		      void (*iter)(struct nf_flowtable *flowtable,
+  				   struct flow_offload *flow, void *data),
+  		      void *data)
+-@@ -436,6 +434,7 @@ static void nf_flow_offload_gc_step(stru
++@@ -443,6 +441,7 @@ static void nf_flow_offload_gc_step(stru
+  		nf_flow_offload_stats(flow_table, flow);
+  	}
+  }
+@@ -785,7 +785,7 @@ Signed-off-by: Felix Fietkau <nbd@nbd.name>
+ +#endif /* _XT_FLOWOFFLOAD_H */
+ --- a/include/net/netfilter/nf_flow_table.h
+ +++ b/include/net/netfilter/nf_flow_table.h
+-@@ -280,6 +280,11 @@ void nf_flow_table_free(struct nf_flowta
++@@ -293,6 +293,11 @@ void nf_flow_table_free(struct nf_flowta
+  
+  void flow_offload_teardown(struct flow_offload *flow);
+  
+diff --git a/target/linux/generic/hack-6.1/901-debloat_sock_diag.patch b/target/linux/generic/hack-6.1/901-debloat_sock_diag.patch
+index b4403e82c8..ffa6e8ac60 100644
+--- a/target/linux/generic/hack-6.1/901-debloat_sock_diag.patch
++++ b/target/linux/generic/hack-6.1/901-debloat_sock_diag.patch
+@@ -79,7 +79,7 @@ Signed-off-by: Felix Fietkau <nbd@nbd.name>
+  INDIRECT_CALLABLE_DECLARE(struct dst_entry *ip6_dst_check(struct dst_entry *,
+  							  u32));
+  INDIRECT_CALLABLE_DECLARE(struct dst_entry *ipv4_dst_check(struct dst_entry *,
+-@@ -2180,9 +2194,11 @@ static void __sk_free(struct sock *sk)
++@@ -2187,9 +2201,11 @@ static void __sk_free(struct sock *sk)
+  	if (likely(sk->sk_net_refcnt))
+  		sock_inuse_add(sock_net(sk), -1);
+  
+diff --git a/target/linux/generic/hack-6.1/902-debloat_proc.patch b/target/linux/generic/hack-6.1/902-debloat_proc.patch
+index a5db9b21c1..0d844994aa 100644
+--- a/target/linux/generic/hack-6.1/902-debloat_proc.patch
++++ b/target/linux/generic/hack-6.1/902-debloat_proc.patch
+@@ -330,7 +330,7 @@ Signed-off-by: Felix Fietkau <nbd@nbd.name>
+  
+ --- a/net/core/sock.c
+ +++ b/net/core/sock.c
+-@@ -4105,6 +4105,8 @@ static __net_initdata struct pernet_oper
++@@ -4113,6 +4113,8 @@ static __net_initdata struct pernet_oper
+  
+  static int __init proto_init(void)
+  {
+diff --git a/target/linux/generic/pending-6.1/700-netfilter-nft_flow_offload-handle-netdevice-events-f.patch b/target/linux/generic/pending-6.1/700-netfilter-nft_flow_offload-handle-netdevice-events-f.patch
+index 6050db3f5b..47c742cff0 100644
+--- a/target/linux/generic/pending-6.1/700-netfilter-nft_flow_offload-handle-netdevice-events-f.patch
++++ b/target/linux/generic/pending-6.1/700-netfilter-nft_flow_offload-handle-netdevice-events-f.patch
+@@ -10,7 +10,7 @@ Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+ 
+ --- a/net/netfilter/nf_flow_table_core.c
+ +++ b/net/netfilter/nf_flow_table_core.c
+-@@ -659,6 +659,23 @@ static struct pernet_operations nf_flow_
++@@ -666,6 +666,23 @@ static struct pernet_operations nf_flow_
+  	.exit_batch = nf_flow_table_pernet_exit,
+  };
+  
+@@ -34,7 +34,7 @@ Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+  static int __init nf_flow_table_module_init(void)
+  {
+  	int ret;
+-@@ -671,8 +688,14 @@ static int __init nf_flow_table_module_i
++@@ -678,8 +695,14 @@ static int __init nf_flow_table_module_i
+  	if (ret)
+  		goto out_offload;
+  
+@@ -49,7 +49,7 @@ Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+  out_offload:
+  	unregister_pernet_subsys(&nf_flow_table_net_ops);
+  	return ret;
+-@@ -680,6 +703,7 @@ out_offload:
++@@ -687,6 +710,7 @@ out_offload:
+  
+  static void __exit nf_flow_table_module_exit(void)
+  {
+-- 
+2.40.1
+
+
+From 11122971f39d329a81dd73a40f90b323b085d6ca Mon Sep 17 00:00:00 2001
+From: Marty Jones <mj8263788@gmail.com>
+Date: Mon, 15 Jan 2024 14:24:32 -0500
+Subject: [PATCH 37/37] kernel: Linux 6.1.73
+
+Link: https://lore.kernel.org/r/20240113094204.017594027@linuxfoundation.org
+
+Signed-off-by: Marty Jones <mj8263788@gmail.com>
+---
+ include/kernel-6.1                             |  4 ++--
+ ...ing-with-source-address-failed-policy.patch | 18 +++++++++---------
+ 2 files changed, 11 insertions(+), 11 deletions(-)
+
+diff --git a/include/kernel-6.1 b/include/kernel-6.1
+index 836cecf7de..fde32f3ca3 100644
+--- a/include/kernel-6.1
++++ b/include/kernel-6.1
+@@ -1,2 +1,2 @@
+-LINUX_VERSION-6.1 = .72
+-LINUX_KERNEL_HASH-6.1.72 = 98dce69077c35cffca799dcdbbd32a02242aad6b0950eb931936bb2ef69f0926
++LINUX_VERSION-6.1 = .73
++LINUX_KERNEL_HASH-6.1.73 = 6cad48706bf1cde342613dca2a2cd6dd4f79f88f9e4d356263564e4b2a5d7e87
+diff --git a/target/linux/generic/pending-6.1/670-ipv6-allow-rejecting-with-source-address-failed-policy.patch b/target/linux/generic/pending-6.1/670-ipv6-allow-rejecting-with-source-address-failed-policy.patch
+index 003a0f20ac..72e8de2f1d 100644
+--- a/target/linux/generic/pending-6.1/670-ipv6-allow-rejecting-with-source-address-failed-policy.patch
++++ b/target/linux/generic/pending-6.1/670-ipv6-allow-rejecting-with-source-address-failed-policy.patch
+@@ -157,7 +157,7 @@ Signed-off-by: Jonas Gorski <jogo@openwrt.org>
+  	case RTN_THROW:
+  	case RTN_UNREACHABLE:
+  	default:
+-@@ -4543,6 +4562,17 @@ static int ip6_pkt_prohibit_out(struct n
++@@ -4540,6 +4559,17 @@ static int ip6_pkt_prohibit_out(struct n
+  	return ip6_pkt_drop(skb, ICMPV6_ADM_PROHIBITED, IPSTATS_MIB_OUTNOROUTES);
+  }
+  
+@@ -175,7 +175,7 @@ Signed-off-by: Jonas Gorski <jogo@openwrt.org>
+  /*
+   *	Allocate a dst for local (unicast / anycast) address.
+   */
+-@@ -5036,7 +5066,8 @@ static int rtm_to_fib6_config(struct sk_
++@@ -5033,7 +5063,8 @@ static int rtm_to_fib6_config(struct sk_
+  	if (rtm->rtm_type == RTN_UNREACHABLE ||
+  	    rtm->rtm_type == RTN_BLACKHOLE ||
+  	    rtm->rtm_type == RTN_PROHIBIT ||
+@@ -185,7 +185,7 @@ Signed-off-by: Jonas Gorski <jogo@openwrt.org>
+  		cfg->fc_flags |= RTF_REJECT;
+  
+  	if (rtm->rtm_type == RTN_LOCAL)
+-@@ -6290,6 +6321,8 @@ static int ip6_route_dev_notify(struct n
++@@ -6287,6 +6318,8 @@ static int ip6_route_dev_notify(struct n
+  #ifdef CONFIG_IPV6_MULTIPLE_TABLES
+  		net->ipv6.ip6_prohibit_entry->dst.dev = dev;
+  		net->ipv6.ip6_prohibit_entry->rt6i_idev = in6_dev_get(dev);
+@@ -194,7 +194,7 @@ Signed-off-by: Jonas Gorski <jogo@openwrt.org>
+  		net->ipv6.ip6_blk_hole_entry->dst.dev = dev;
+  		net->ipv6.ip6_blk_hole_entry->rt6i_idev = in6_dev_get(dev);
+  #endif
+-@@ -6301,6 +6334,7 @@ static int ip6_route_dev_notify(struct n
++@@ -6298,6 +6331,7 @@ static int ip6_route_dev_notify(struct n
+  		in6_dev_put_clear(&net->ipv6.ip6_null_entry->rt6i_idev);
+  #ifdef CONFIG_IPV6_MULTIPLE_TABLES
+  		in6_dev_put_clear(&net->ipv6.ip6_prohibit_entry->rt6i_idev);
+@@ -202,7 +202,7 @@ Signed-off-by: Jonas Gorski <jogo@openwrt.org>
+  		in6_dev_put_clear(&net->ipv6.ip6_blk_hole_entry->rt6i_idev);
+  #endif
+  	}
+-@@ -6492,6 +6526,8 @@ static int __net_init ip6_route_net_init
++@@ -6489,6 +6523,8 @@ static int __net_init ip6_route_net_init
+  
+  #ifdef CONFIG_IPV6_MULTIPLE_TABLES
+  	net->ipv6.fib6_has_custom_rules = false;
+@@ -211,7 +211,7 @@ Signed-off-by: Jonas Gorski <jogo@openwrt.org>
+  	net->ipv6.ip6_prohibit_entry = kmemdup(&ip6_prohibit_entry_template,
+  					       sizeof(*net->ipv6.ip6_prohibit_entry),
+  					       GFP_KERNEL);
+-@@ -6502,11 +6538,21 @@ static int __net_init ip6_route_net_init
++@@ -6499,11 +6535,21 @@ static int __net_init ip6_route_net_init
+  			 ip6_template_metrics, true);
+  	INIT_LIST_HEAD(&net->ipv6.ip6_prohibit_entry->rt6i_uncached);
+  
+@@ -234,7 +234,7 @@ Signed-off-by: Jonas Gorski <jogo@openwrt.org>
+  	net->ipv6.ip6_blk_hole_entry->dst.ops = &net->ipv6.ip6_dst_ops;
+  	dst_init_metrics(&net->ipv6.ip6_blk_hole_entry->dst,
+  			 ip6_template_metrics, true);
+-@@ -6533,6 +6579,8 @@ out:
++@@ -6530,6 +6576,8 @@ out:
+  	return ret;
+  
+  #ifdef CONFIG_IPV6_MULTIPLE_TABLES
+@@ -243,7 +243,7 @@ Signed-off-by: Jonas Gorski <jogo@openwrt.org>
+  out_ip6_prohibit_entry:
+  	kfree(net->ipv6.ip6_prohibit_entry);
+  out_ip6_null_entry:
+-@@ -6552,6 +6600,7 @@ static void __net_exit ip6_route_net_exi
++@@ -6549,6 +6597,7 @@ static void __net_exit ip6_route_net_exi
+  	kfree(net->ipv6.ip6_null_entry);
+  #ifdef CONFIG_IPV6_MULTIPLE_TABLES
+  	kfree(net->ipv6.ip6_prohibit_entry);
+@@ -251,7 +251,7 @@ Signed-off-by: Jonas Gorski <jogo@openwrt.org>
+  	kfree(net->ipv6.ip6_blk_hole_entry);
+  #endif
+  	dst_entries_destroy(&net->ipv6.ip6_dst_ops);
+-@@ -6635,6 +6684,9 @@ void __init ip6_route_init_special_entri
++@@ -6632,6 +6681,9 @@ void __init ip6_route_init_special_entri
+  	init_net.ipv6.ip6_prohibit_entry->rt6i_idev = in6_dev_get(init_net.loopback_dev);
+  	init_net.ipv6.ip6_blk_hole_entry->dst.dev = init_net.loopback_dev;
+  	init_net.ipv6.ip6_blk_hole_entry->rt6i_idev = in6_dev_get(init_net.loopback_dev);
 -- 
 2.40.1
 
