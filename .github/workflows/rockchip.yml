@@ -29,6 +29,7 @@ jobs:
                 cp -rf rpi5/* openwrt/
                 cd openwrt
                 git apply 0001-rk3568-88.patch
+                git apply 6.1.75
                 ./scripts/feeds update -a
                 ./scripts/feeds install -a
                 cd feeds/luci
