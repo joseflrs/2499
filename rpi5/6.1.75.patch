@@ -1,0 +1,328 @@
+From ec8c06907d00211cdadbfeb8573c0e555de47fe5 Mon Sep 17 00:00:00 2001
+From: Marty Jones <mj8263788@gmail.com>
+Date: Fri, 26 Jan 2024 15:30:09 -0500
+Subject: [PATCH 16/17] kernel: Linux 6.1.75
+
+https://lore.kernel.org/all/20240122235751.480367507@linuxfoundation.org
+https://lore.kernel.org/all/20240123174510.372863442@linuxfoundation.org
+
+Signed-off-by: Marty Jones <mj8263788@gmail.com>
+---
+ include/kernel-6.1                            |  4 +--
+ ...835-Support-setting-reboot-partition.patch |  6 ++--
+ ...50-bcm2835aux-defer-if-clock-is-zero.patch |  2 +-
+ ...-Ignore-params-after-the-partition-n.patch |  2 +-
+ ...ncel-deferred-work-if-pagelist-empty.patch |  4 +--
+ ...7xx-Read-modem-line-state-at-startup.patch |  2 +-
+ ...wc3-Set-DMA-and-coherent-masks-early.patch | 14 ++++----
+ ...c-move-TX-timer-arm-after-DMA-enable.patch |  8 ++---
+ ...a-Support-HW-controlled-mode-via-pri.patch |  2 +-
+ .../321-powerpc_crtsavres_prereq.patch        | 16 +++-------
+ ...-only-v2-leases-handle-the-directory.patch | 32 -------------------
+ ...les-ignore-EOPNOTSUPP-on-flowtable-d.patch |  2 +-
+ 12 files changed, 27 insertions(+), 67 deletions(-)
+ delete mode 100644 target/linux/generic/pending-6.1/540-ksmbd-only-v2-leases-handle-the-directory.patch
+
+diff --git a/include/kernel-6.1 b/include/kernel-6.1
+index 87c6bf5097..b6c55613b6 100644
+--- a/include/kernel-6.1
++++ b/include/kernel-6.1
+@@ -1,2 +1,2 @@
+-LINUX_VERSION-6.1 = .74
+-LINUX_KERNEL_HASH-6.1.74 = b7fbd1d79faed2ce3570ef79dc1223e4e19c868b86326b14a435db56ebbb2022
++LINUX_VERSION-6.1 = .75
++LINUX_KERNEL_HASH-6.1.75 = 6cd19410330c13ec4c18fd28a83d3e40fc12a152815fb7c3e1b0764329093a56
+diff --git a/target/linux/bcm27xx/patches-6.1/950-0092-watchdog-bcm2835-Support-setting-reboot-partition.patch b/target/linux/bcm27xx/patches-6.1/950-0092-watchdog-bcm2835-Support-setting-reboot-partition.patch
+index b1ba4ae6b8..1fa6d6d75a 100644
+--- a/target/linux/bcm27xx/patches-6.1/950-0092-watchdog-bcm2835-Support-setting-reboot-partition.patch
++++ b/target/linux/bcm27xx/patches-6.1/950-0092-watchdog-bcm2835-Support-setting-reboot-partition.patch
+@@ -36,7 +36,7 @@ Signed-off-by: Noralf Trønnes <noralf@tronnes.org>
+  
+  #define SECS_TO_WDOG_TICKS(x) ((x) << 16)
+  #define WDOG_TICKS_TO_SECS(x) ((x) >> 16)
+-@@ -97,9 +91,24 @@ static unsigned int bcm2835_wdt_get_time
++@@ -98,9 +92,24 @@ static unsigned int bcm2835_wdt_get_time
+  	return WDOG_TICKS_TO_SECS(ret & PM_WDOG_TIME_SET);
+  }
+  
+@@ -63,7 +63,7 @@ Signed-off-by: Noralf Trønnes <noralf@tronnes.org>
+  
+  	/* use a timeout of 10 ticks (~150us) */
+  	writel_relaxed(10 | PM_PASSWORD, wdt->base + PM_WDOG);
+-@@ -117,7 +126,13 @@ static int bcm2835_restart(struct watchd
++@@ -118,7 +127,13 @@ static int bcm2835_restart(struct watchd
+  {
+  	struct bcm2835_wdt *wdt = watchdog_get_drvdata(wdog);
+  
+@@ -78,7 +78,7 @@ Signed-off-by: Noralf Trønnes <noralf@tronnes.org>
+  
+  	return 0;
+  }
+-@@ -152,19 +167,9 @@ static struct watchdog_device bcm2835_wd
++@@ -153,19 +168,9 @@ static struct watchdog_device bcm2835_wd
+  static void bcm2835_power_off(void)
+  {
+  	struct bcm2835_wdt *wdt = bcm2835_power_off_wdt;
+diff --git a/target/linux/bcm27xx/patches-6.1/950-0249-serial-8250-bcm2835aux-defer-if-clock-is-zero.patch b/target/linux/bcm27xx/patches-6.1/950-0249-serial-8250-bcm2835aux-defer-if-clock-is-zero.patch
+index 5013109566..656defb3c7 100644
+--- a/target/linux/bcm27xx/patches-6.1/950-0249-serial-8250-bcm2835aux-defer-if-clock-is-zero.patch
++++ b/target/linux/bcm27xx/patches-6.1/950-0249-serial-8250-bcm2835aux-defer-if-clock-is-zero.patch
+@@ -12,7 +12,7 @@ Signed-off-by: Phil Elwell <phil@raspberrypi.com>
+ 
+ --- a/drivers/tty/serial/8250/8250_bcm2835aux.c
+ +++ b/drivers/tty/serial/8250/8250_bcm2835aux.c
+-@@ -180,6 +180,13 @@ static int bcm2835aux_serial_probe(struc
++@@ -182,6 +182,13 @@ static int bcm2835aux_serial_probe(struc
+  	 */
+  	up.port.uartclk = uartclk * 2;
+  
+diff --git a/target/linux/bcm27xx/patches-6.1/950-0284-watchdog-bcm2835-Ignore-params-after-the-partition-n.patch b/target/linux/bcm27xx/patches-6.1/950-0284-watchdog-bcm2835-Ignore-params-after-the-partition-n.patch
+index bf3ba2153e..a7614795df 100644
+--- a/target/linux/bcm27xx/patches-6.1/950-0284-watchdog-bcm2835-Ignore-params-after-the-partition-n.patch
++++ b/target/linux/bcm27xx/patches-6.1/950-0284-watchdog-bcm2835-Ignore-params-after-the-partition-n.patch
+@@ -12,7 +12,7 @@ which are only relevant to other reboot notifiers.
+ 
+ --- a/drivers/watchdog/bcm2835_wdt.c
+ +++ b/drivers/watchdog/bcm2835_wdt.c
+-@@ -126,10 +126,12 @@ static int bcm2835_restart(struct watchd
++@@ -127,10 +127,12 @@ static int bcm2835_restart(struct watchd
+  {
+  	struct bcm2835_wdt *wdt = watchdog_get_drvdata(wdog);
+  
+diff --git a/target/linux/bcm27xx/patches-6.1/950-0670-fbdev-Don-t-cancel-deferred-work-if-pagelist-empty.patch b/target/linux/bcm27xx/patches-6.1/950-0670-fbdev-Don-t-cancel-deferred-work-if-pagelist-empty.patch
+index 35441799dd..2f00f815db 100644
+--- a/target/linux/bcm27xx/patches-6.1/950-0670-fbdev-Don-t-cancel-deferred-work-if-pagelist-empty.patch
++++ b/target/linux/bcm27xx/patches-6.1/950-0670-fbdev-Don-t-cancel-deferred-work-if-pagelist-empty.patch
+@@ -24,11 +24,11 @@ Signed-off-by: Phil Elwell <phil@raspberrypi.com>
+ 
+ --- a/drivers/video/fbdev/core/fb_defio.c
+ +++ b/drivers/video/fbdev/core/fb_defio.c
+-@@ -321,7 +321,8 @@ static void fb_deferred_io_lastclose(str
++@@ -317,7 +317,8 @@ static void fb_deferred_io_lastclose(str
+  	struct page *page;
+  	int i;
+  
+--	cancel_delayed_work_sync(&info->deferred_work);
++-	flush_delayed_work(&info->deferred_work);
+ +	if (!list_empty(&info->fbdefio->pagereflist))
+ +		cancel_delayed_work_sync(&info->deferred_work);
+  
+diff --git a/target/linux/bcm27xx/patches-6.1/950-0791-serial-sc16is7xx-Read-modem-line-state-at-startup.patch b/target/linux/bcm27xx/patches-6.1/950-0791-serial-sc16is7xx-Read-modem-line-state-at-startup.patch
+index c93ebf3e7e..148134f0a2 100644
+--- a/target/linux/bcm27xx/patches-6.1/950-0791-serial-sc16is7xx-Read-modem-line-state-at-startup.patch
++++ b/target/linux/bcm27xx/patches-6.1/950-0791-serial-sc16is7xx-Read-modem-line-state-at-startup.patch
+@@ -16,7 +16,7 @@ Signed-off-by: Phil Elwell <phil@raspberrypi.com>
+ 
+ --- a/drivers/tty/serial/sc16is7xx.c
+ +++ b/drivers/tty/serial/sc16is7xx.c
+-@@ -1221,6 +1221,9 @@ static int sc16is7xx_startup(struct uart
++@@ -1222,6 +1222,9 @@ static int sc16is7xx_startup(struct uart
+  	      SC16IS7XX_IER_MSI_BIT;
+  	sc16is7xx_port_write(port, SC16IS7XX_IER_REG, val);
+  
+diff --git a/target/linux/bcm27xx/patches-6.1/950-0865-usb-dwc3-Set-DMA-and-coherent-masks-early.patch b/target/linux/bcm27xx/patches-6.1/950-0865-usb-dwc3-Set-DMA-and-coherent-masks-early.patch
+index f6944e226f..2c09524dfd 100644
+--- a/target/linux/bcm27xx/patches-6.1/950-0865-usb-dwc3-Set-DMA-and-coherent-masks-early.patch
++++ b/target/linux/bcm27xx/patches-6.1/950-0865-usb-dwc3-Set-DMA-and-coherent-masks-early.patch
+@@ -212,7 +212,7 @@ Signed-off-by: Jonathan Bell <jonathan@raspberrypi.com>
+  	},
+ --- a/drivers/usb/dwc3/core.c
+ +++ b/drivers/usb/dwc3/core.c
+-@@ -1216,6 +1216,24 @@ static void dwc3_config_threshold(struct
++@@ -1179,6 +1179,24 @@ static void dwc3_config_threshold(struct
+  	}
+  }
+  
+@@ -237,7 +237,7 @@ Signed-off-by: Jonathan Bell <jonathan@raspberrypi.com>
+  /**
+   * dwc3_core_init - Low-level initialization of DWC3 Core
+   * @dwc: Pointer to our controller context structure
+-@@ -1308,6 +1326,8 @@ static int dwc3_core_init(struct dwc3 *d
++@@ -1271,6 +1289,8 @@ static int dwc3_core_init(struct dwc3 *d
+  
+  	dwc3_set_incr_burst_type(dwc);
+  
+@@ -246,7 +246,7 @@ Signed-off-by: Jonathan Bell <jonathan@raspberrypi.com>
+  	usb_phy_set_suspend(dwc->usb2_phy, 0);
+  	usb_phy_set_suspend(dwc->usb3_phy, 0);
+  	ret = phy_power_on(dwc->usb2_generic_phy);
+-@@ -1541,6 +1561,7 @@ static void dwc3_get_properties(struct d
++@@ -1504,6 +1524,7 @@ static void dwc3_get_properties(struct d
+  	u8			tx_thr_num_pkt_prd = 0;
+  	u8			tx_max_burst_prd = 0;
+  	u8			tx_fifo_resize_max_num;
+@@ -254,7 +254,7 @@ Signed-off-by: Jonathan Bell <jonathan@raspberrypi.com>
+  	const char		*usb_psy_name;
+  	int			ret;
+  
+-@@ -1563,6 +1584,9 @@ static void dwc3_get_properties(struct d
++@@ -1526,6 +1547,9 @@ static void dwc3_get_properties(struct d
+  	 */
+  	tx_fifo_resize_max_num = 6;
+  
+@@ -264,7 +264,7 @@ Signed-off-by: Jonathan Bell <jonathan@raspberrypi.com>
+  	dwc->maximum_speed = usb_get_maximum_speed(dev);
+  	dwc->max_ssp_rate = usb_get_maximum_ssp_rate(dev);
+  	dwc->dr_mode = usb_get_dr_mode(dev);
+-@@ -1678,6 +1702,9 @@ static void dwc3_get_properties(struct d
++@@ -1641,6 +1665,9 @@ static void dwc3_get_properties(struct d
+  	dwc->dis_split_quirk = device_property_read_bool(dev,
+  				"snps,dis-split-quirk");
+  
+@@ -274,7 +274,7 @@ Signed-off-by: Jonathan Bell <jonathan@raspberrypi.com>
+  	dwc->lpm_nyet_threshold = lpm_nyet_threshold;
+  	dwc->tx_de_emphasis = tx_de_emphasis;
+  
+-@@ -1695,6 +1722,8 @@ static void dwc3_get_properties(struct d
++@@ -1658,6 +1685,8 @@ static void dwc3_get_properties(struct d
+  	dwc->tx_thr_num_pkt_prd = tx_thr_num_pkt_prd;
+  	dwc->tx_max_burst_prd = tx_max_burst_prd;
+  
+@@ -283,7 +283,7 @@ Signed-off-by: Jonathan Bell <jonathan@raspberrypi.com>
+  	dwc->imod_interval = 0;
+  
+  	dwc->tx_fifo_resize_max_num = tx_fifo_resize_max_num;
+-@@ -1903,6 +1932,12 @@ static int dwc3_probe(struct platform_de
++@@ -1866,6 +1895,12 @@ static int dwc3_probe(struct platform_de
+  
+  	dwc3_get_properties(dwc);
+  
+diff --git a/target/linux/generic/backport-6.1/771-v6.7-02-net-stmmac-move-TX-timer-arm-after-DMA-enable.patch b/target/linux/generic/backport-6.1/771-v6.7-02-net-stmmac-move-TX-timer-arm-after-DMA-enable.patch
+index d1e04e9069..e94a2ca819 100644
+--- a/target/linux/generic/backport-6.1/771-v6.7-02-net-stmmac-move-TX-timer-arm-after-DMA-enable.patch
++++ b/target/linux/generic/backport-6.1/771-v6.7-02-net-stmmac-move-TX-timer-arm-after-DMA-enable.patch
+@@ -42,7 +42,7 @@ Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+  
+  	__netif_tx_unlock_bh(netdev_get_tx_queue(priv->dev, queue));
+  
+-@@ -5485,12 +5489,13 @@ static int stmmac_napi_poll_tx(struct na
++@@ -5486,12 +5490,13 @@ static int stmmac_napi_poll_tx(struct na
+  	struct stmmac_channel *ch =
+  		container_of(napi, struct stmmac_channel, tx_napi);
+  	struct stmmac_priv *priv = ch->priv_data;
+@@ -57,7 +57,7 @@ Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+  	work_done = min(work_done, budget);
+  
+  	if (work_done < budget && napi_complete_done(napi, work_done)) {
+-@@ -5501,6 +5506,10 @@ static int stmmac_napi_poll_tx(struct na
++@@ -5502,6 +5507,10 @@ static int stmmac_napi_poll_tx(struct na
+  		spin_unlock_irqrestore(&ch->lock, flags);
+  	}
+  
+@@ -68,7 +68,7 @@ Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+  	return work_done;
+  }
+  
+-@@ -5509,12 +5518,13 @@ static int stmmac_napi_poll_rxtx(struct
++@@ -5510,12 +5519,13 @@ static int stmmac_napi_poll_rxtx(struct
+  	struct stmmac_channel *ch =
+  		container_of(napi, struct stmmac_channel, rxtx_napi);
+  	struct stmmac_priv *priv = ch->priv_data;
+@@ -83,7 +83,7 @@ Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+  	tx_done = min(tx_done, budget);
+  
+  	rx_done = stmmac_rx_zc(priv, budget, chan);
+-@@ -5539,6 +5549,10 @@ static int stmmac_napi_poll_rxtx(struct
++@@ -5540,6 +5550,10 @@ static int stmmac_napi_poll_rxtx(struct
+  		spin_unlock_irqrestore(&ch->lock, flags);
+  	}
+  
+diff --git a/target/linux/generic/backport-6.1/815-v6.7-3-leds-turris-omnia-Support-HW-controlled-mode-via-pri.patch b/target/linux/generic/backport-6.1/815-v6.7-3-leds-turris-omnia-Support-HW-controlled-mode-via-pri.patch
+index f64bbc7782..00773ab0f6 100644
+--- a/target/linux/generic/backport-6.1/815-v6.7-3-leds-turris-omnia-Support-HW-controlled-mode-via-pri.patch
++++ b/target/linux/generic/backport-6.1/815-v6.7-3-leds-turris-omnia-Support-HW-controlled-mode-via-pri.patch
+@@ -49,7 +49,7 @@ Signed-off-by: Lee Jones <lee@kernel.org>
+ 
+ --- a/drivers/leds/Kconfig
+ +++ b/drivers/leds/Kconfig
+-@@ -163,6 +163,7 @@ config LEDS_TURRIS_OMNIA
++@@ -164,6 +164,7 @@ config LEDS_TURRIS_OMNIA
+  	depends on I2C
+  	depends on MACH_ARMADA_38X || COMPILE_TEST
+  	depends on OF
+diff --git a/target/linux/generic/hack-6.1/321-powerpc_crtsavres_prereq.patch b/target/linux/generic/hack-6.1/321-powerpc_crtsavres_prereq.patch
+index 17eba0b354..360d087410 100644
+--- a/target/linux/generic/hack-6.1/321-powerpc_crtsavres_prereq.patch
++++ b/target/linux/generic/hack-6.1/321-powerpc_crtsavres_prereq.patch
+@@ -16,23 +16,15 @@ Signed-off-by: Alexandros C. Couloumbis <alex@ozo.com>
+ 
+ --- a/arch/powerpc/Makefile
+ +++ b/arch/powerpc/Makefile
+-@@ -42,19 +42,6 @@ machine-$(CONFIG_PPC64) += 64
+- machine-$(CONFIG_CPU_LITTLE_ENDIAN) += le
++@@ -43,11 +43,6 @@ machine-$(CONFIG_CPU_LITTLE_ENDIAN) += l
+  UTS_MACHINE := $(subst $(space),,$(machine-y))
+  
+--# XXX This needs to be before we override LD below
+--ifdef CONFIG_PPC32
+--KBUILD_LDFLAGS_MODULE += arch/powerpc/lib/crtsavres.o
+--else
+--ifeq ($(call ld-ifversion, -ge, 22500, y),y)
++ ifeq ($(CONFIG_PPC64)$(CONFIG_LD_IS_BFD),yy)
+ -# Have the linker provide sfpr if possible.
+ -# There is a corresponding test in arch/powerpc/lib/Makefile
+ -KBUILD_LDFLAGS_MODULE += --save-restore-funcs
+ -else
+ -KBUILD_LDFLAGS_MODULE += arch/powerpc/lib/crtsavres.o
+--endif
+--endif
+--
++ endif
++ 
+  ifdef CONFIG_CPU_LITTLE_ENDIAN
+- KBUILD_CFLAGS	+= -mlittle-endian
+- KBUILD_LDFLAGS	+= -EL
+diff --git a/target/linux/generic/pending-6.1/540-ksmbd-only-v2-leases-handle-the-directory.patch b/target/linux/generic/pending-6.1/540-ksmbd-only-v2-leases-handle-the-directory.patch
+deleted file mode 100644
+index b565fbd5b9..0000000000
+--- a/target/linux/generic/pending-6.1/540-ksmbd-only-v2-leases-handle-the-directory.patch
++++ /dev/null
+@@ -1,32 +0,0 @@
+-From 86b7307af26834415e1ba8597319a8b64846346f Mon Sep 17 00:00:00 2001
+-From: Namjae Jeon <linkinjeon@kernel.org>
+-Date: Mon, 15 Jan 2024 10:24:54 +0900
+-Subject: [PATCH] ksmbd: only v2 leases handle the directory
+-
+-When smb2 leases is disable, ksmbd can send oplock break notification
+-and cause wait oplock break ack timeout. It may appear like hang when
+-accessing a directory. This patch make only v2 leases handle the
+-directory.
+-
+-Cc: stable@vger.kernel.org
+-Signed-off-by: Namjae Jeon <linkinjeon@kernel.org>
+-Signed-off-by: Steve French <stfrench@microsoft.com>
+----
+- fs/smb/server/oplock.c | 6 ++++++
+- 1 file changed, 6 insertions(+)
+-
+---- a/fs/smb/server/oplock.c
+-+++ b/fs/smb/server/oplock.c
+-@@ -1191,6 +1191,12 @@ int smb_grant_oplock(struct ksmbd_work *
+- 	bool prev_op_has_lease;
+- 	__le32 prev_op_state = 0;
+- 
+-+	/* Only v2 leases handle the directory */
+-+	if (S_ISDIR(file_inode(fp->filp)->i_mode)) {
+-+		if (!lctx || lctx->version != 2)
+-+			return 0;
+-+	}
+-+
+- 	opinfo = alloc_opinfo(work, pid, tid);
+- 	if (!opinfo)
+- 		return -ENOMEM;
+diff --git a/target/linux/generic/pending-6.1/701-netfilter-nf_tables-ignore-EOPNOTSUPP-on-flowtable-d.patch b/target/linux/generic/pending-6.1/701-netfilter-nf_tables-ignore-EOPNOTSUPP-on-flowtable-d.patch
+index 307ddce761..683df4df83 100644
+--- a/target/linux/generic/pending-6.1/701-netfilter-nf_tables-ignore-EOPNOTSUPP-on-flowtable-d.patch
++++ b/target/linux/generic/pending-6.1/701-netfilter-nf_tables-ignore-EOPNOTSUPP-on-flowtable-d.patch
+@@ -18,7 +18,7 @@ Signed-off-by: Felix Fietkau <nbd@nbd.name>
+ 
+ --- a/net/netfilter/nf_tables_api.c
+ +++ b/net/netfilter/nf_tables_api.c
+-@@ -7884,7 +7884,7 @@ static int nft_register_flowtable_net_ho
++@@ -7900,7 +7900,7 @@ static int nft_register_flowtable_net_ho
+  		err = flowtable->data.type->setup(&flowtable->data,
+  						  hook->ops.dev,
+  						  FLOW_BLOCK_BIND);
+-- 
+2.43.0
+
