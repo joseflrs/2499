@@ -1,5 +1,7 @@
 name: RPi5 images
-on: [push]
+on:
+  schedule:
+    - cron: '00 22 * * *'
 
 jobs:
     build:
@@ -24,24 +26,26 @@ jobs:
                 git clone https://github.com/openwrt/openwrt.git
                 cp -rf rpi5/* openwrt/
                 cd openwrt
-                git apply 0001-raspi5.patch
-                git apply 6.1.75.patch
                 ./scripts/feeds update -a
                 ./scripts/feeds install -a
                 cd feeds/luci
-                wget https://gist.githubusercontent.com/mj22226/f6db007367a22a31f9cb1c109a032b45/raw/be368c4f1605f652a001d81548c3a3e14adf6cb7/luci-app-diskman.patch
-                git apply luci-app-diskman.patch
+                wget https://gist.githubusercontent.com/mj22226/363cefecd314e45b49d8eafff8473fcf/raw/69b47c9a972e15056f94870d76d93a5146893f99/01-diskman.patch
+                git apply 01-diskman.patch
                 cd -
                 cd  feeds/packages
                 wget https://gist.githubusercontent.com/mj22226/351f11e66f08f06e37a985719a31ddb4/raw/b35ba7a3aac1949bd6bbeaad065a0a93dc3c34f0/01-cpu.patch
                 wget https://gist.githubusercontent.com/mj22226/b66f5c1bd5fc7e1cb3cf2c690b5dbd5a/raw/b955e726cbb0948d932c8d6143229ad604320149/20-lxc.patch
-                git apply 20-lxc.patch
+                wget https://github.com/mj22226/packages/commit/3afa50b894e9bc35db470643316a3e242f9d84bc.patch
+                wget https://github.com/mj22226/packages/commit/314f848745eed3daa28368ca6c487e6f0a9fc665.patch
                 git apply 01-cpu.patch
+                git apply 20-lxc.patch
+                git apply 3afa50b894e9bc35db470643316a3e242f9d84bc.patch
+                git apply 314f848745eed3daa28368ca6c487e6f0a9fc665.patch
                 cd -
-                sed -i "70s/'0'/'1'/" feeds/luci/applications/luci-app-statistics/root/etc/config/luci_statistics
-                sed -i "83s/'0'/'1'/" feeds/luci/applications/luci-app-statistics/root/etc/config/luci_statistics
-                sed -i "194s/'0'/'1'/" feeds/luci/applications/luci-app-statistics/root/etc/config/luci_statistics
-                sed -i "211s/'0'/'1'/" feeds/luci/applications/luci-app-statistics/root/etc/config/luci_statistics
+                sed -i "71s/'0'/'1'/" feeds/luci/applications/luci-app-statistics/root/etc/config/luci_statistics
+                sed -i "84s/'0'/'1'/" feeds/luci/applications/luci-app-statistics/root/etc/config/luci_statistics
+                sed -i "195s/'0'/'1'/" feeds/luci/applications/luci-app-statistics/root/etc/config/luci_statistics
+                sed -i "212s/'0'/'1'/" feeds/luci/applications/luci-app-statistics/root/etc/config/luci_statistics
                 sed -i "13s/'1'/'0'/" feeds/packages/utils/dockerd/files/etc/config/dockerd
                 sed -i 's/default n/default y/g' feeds/packages/utils/dockerd/Config.in
                 sed -i "13s/'1'/'0'/" feeds/packages/utils/dockerd/files/etc/config/dockerd
@@ -58,12 +62,20 @@ jobs:
                 make -j$(nproc) 'IGNORE_ERRORS=n m'
                 rm -rf bin/targets/bcm27xx/bcm2712/packages
                 echo "D=$(date +'%Y.%m.%d')" >> $GITHUB_ENV
+                echo "HASH=$(git log -1 --format="%H")" >> $GITHUB_ENV
+            - name: Delete tag
+              uses: ClementTsang/delete-tag-and-release@v0.4.0
+              with:
+                delete_release: true
+                tag_name: rpi5
+              env:
+                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             - name: Create release
-              uses: ncipollo/release-action@v1.13.0
+              uses: ncipollo/release-action@v1.14.0
               with:
                 allowUpdates: true
                 name: RPi5 Images ${{ env.D }}
-                tag: rpi5-${{ env.D }}
+                tag: rpi5
                 replacesArtifacts: true
                 prerelease: false
                 token: "${{ secrets.GITHUB_TOKEN }}"
