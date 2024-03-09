@@ -28,7 +28,11 @@ jobs:
                 cd openwrt
                 wget https://downloads.openwrt.org/snapshots/targets/bcm27xx/bcm2712/llvm-bpf-15.0.7.Linux-x86_64.tar.xz
                 wget https://github.com/mj22226/openwrt/commit/33b5077e6bc73e358adab7d3679293eb55a43c71.patch
+                wget https://github.com/mj22226/openwrt/commit/f0585b1283f13bfb5c0e64f2341745a848dc621f.patch
+                wget https://github.com/mj22226/openwrt/commit/079c7ea2c7dd5c0d17b47e7d1b2981e9ec8fe576.patch
                 git apply 33b5077e6bc73e358adab7d3679293eb55a43c71.patch
+                git apply f0585b1283f13bfb5c0e64f2341745a848dc621f.patch
+                git apply 079c7ea2c7dd5c0d17b47e7d1b2981e9ec8fe576.patch
                 tar -xvf llvm-bpf-15.0.7.Linux-x86_64.tar.xz
                 ./scripts/feeds update -a
                 ./scripts/feeds install -a
