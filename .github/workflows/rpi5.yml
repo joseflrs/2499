@@ -1,7 +1,7 @@
 name: RPi5 images
 on:
   schedule:
-    - cron: '00 22 * * *'
+    - cron: '30 00 * * *'
 
 jobs:
     build:
@@ -26,6 +26,10 @@ jobs:
                 git clone https://github.com/openwrt/openwrt.git
                 cp -rf rpi5/* openwrt/
                 cd openwrt
+                wget https://downloads.openwrt.org/snapshots/targets/bcm27xx/bcm2712/llvm-bpf-15.0.7.Linux-x86_64.tar.xz
+                wget https://github.com/mj22226/openwrt/commit/33b5077e6bc73e358adab7d3679293eb55a43c71.patch
+                git apply 33b5077e6bc73e358adab7d3679293eb55a43c71.patch
+                tar -xvf llvm-bpf-15.0.7.Linux-x86_64.tar.xz
                 ./scripts/feeds update -a
                 ./scripts/feeds install -a
                 cd feeds/luci
