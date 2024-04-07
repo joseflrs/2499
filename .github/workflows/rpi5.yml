@@ -40,13 +40,13 @@ jobs:
                 wget https://github.com/mj22226/openwrt/commit/079c7ea2c7dd5c0d17b47e7d1b2981e9ec8fe576.patch
                 wget https://github.com/mj22226/openwrt/commit/ef71d0ebe9f9e7dec16eb7c070a674ac5a00b2b7.patch
                 wget https://github.com/mj22226/openwrt/commit/c34e77bd13c7a7d1d90d7712fd5a0920f31904b7.patch
-                wget https://patch-diff.githubusercontent.com/raw/openwrt/openwrt/pull/15090.patch
+                wget https://github.com/mj22226/openwrt/commit/8fd86982e4c79b128de26275c876c57d92d1bb0c.patch
                 git apply 33b5077e6bc73e358adab7d3679293eb55a43c71.patch
                 git apply f0585b1283f13bfb5c0e64f2341745a848dc621f.patch
                 git apply 079c7ea2c7dd5c0d17b47e7d1b2981e9ec8fe576.patch
                 git apply ef71d0ebe9f9e7dec16eb7c070a674ac5a00b2b7.patch
                 git apply c34e77bd13c7a7d1d90d7712fd5a0920f31904b7.patch
-                git apply 15090.patch
+                git apply 8fd86982e4c79b128de26275c876c57d92d1bb0c.patch
                 tar -xvf llvm-bpf-15.0.7.Linux-x86_64.tar.xz
                 ./scripts/feeds update -a
                 ./scripts/feeds install -a
