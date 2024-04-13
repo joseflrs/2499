@@ -34,7 +34,7 @@ jobs:
                 git clone https://github.com/openwrt/openwrt.git
                 cp -rf rpi5/* openwrt/
                 cd openwrt
-                wget https://downloads.openwrt.org/snapshots/targets/bcm27xx/bcm2712/llvm-bpf-15.0.7.Linux-x86_64.tar.xz
+                wget https://downloads.openwrt.org/snapshots/targets/bcm27xx/bcm2712/llvm-bpf-15.0.7.Linux-x86_64.tar.zst
                 wget https://github.com/mj22226/openwrt/commit/33b5077e6bc73e358adab7d3679293eb55a43c71.patch
                 wget https://github.com/mj22226/openwrt/commit/f0585b1283f13bfb5c0e64f2341745a848dc621f.patch
                 wget https://github.com/mj22226/openwrt/commit/079c7ea2c7dd5c0d17b47e7d1b2981e9ec8fe576.patch
@@ -45,7 +45,7 @@ jobs:
                 git apply 079c7ea2c7dd5c0d17b47e7d1b2981e9ec8fe576.patch
                 git apply ef71d0ebe9f9e7dec16eb7c070a674ac5a00b2b7.patch
                 git apply c34e77bd13c7a7d1d90d7712fd5a0920f31904b7.patch
-                tar -xvf llvm-bpf-15.0.7.Linux-x86_64.tar.xz
+                tar -xvf llvm-bpf-15.0.7.Linux-x86_64.tar.zst
                 ./scripts/feeds update -a
                 ./scripts/feeds install -a
                 cd feeds/luci
