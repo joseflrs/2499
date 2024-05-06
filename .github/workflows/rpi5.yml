@@ -35,7 +35,7 @@ jobs:
                 cp -rf rpi5/* openwrt/
                 cd openwrt
                 wget https://downloads.openwrt.org/snapshots/targets/bcm27xx/bcm2712/llvm-bpf-15.0.7.Linux-x86_64.tar.zst
-                wget https://github.com/mj22226/openwrt/commit/b78da795a295eaccf2bbd1f0e05ce35166a5b251.patch
+                wget https://github.com/mj22226/source/commit/73b2896fd247c80f28f8e313b92c5d4d19697e84.patch
                 wget https://github.com/mj22226/openwrt/commit/c86d619a592d1251788c908ca732d3006448fccd.patch
                 wget https://github.com/mj22226/openwrt/commit/066d400babe2de1d5d5c326e2f7a7b8ef7826eca.patch
                 wget https://github.com/mj22226/openwrt/commit/e89fc058e8dc43360f23ff0ff4a02939468afb94.patch
@@ -48,7 +48,7 @@ jobs:
                 wget https://github.com/mj22226/openwrt/commit/136eb8bdc9675dae65386f106918db512bdf59ff.patch
                 wget https://github.com/mj22226/openwrt/commit/d2c22e13f8f048ee96faa1547b0a4f2c4ee33152.patch
                 wget https://github.com/mj22226/openwrt/commit/74009a2f7edf0f0ac72ac86b844b6ced6d62d6c9.patch
-                git apply b78da795a295eaccf2bbd1f0e05ce35166a5b251.patch
+                git apply 73b2896fd247c80f28f8e313b92c5d4d19697e84.patch
                 git apply c86d619a592d1251788c908ca732d3006448fccd.patch
                 git apply 066d400babe2de1d5d5c326e2f7a7b8ef7826eca.patch
                 git apply e89fc058e8dc43360f23ff0ff4a02939468afb94.patch
