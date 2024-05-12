@@ -71,10 +71,8 @@ jobs:
                 cd  feeds/packages
                 wget https://gist.githubusercontent.com/mj22226/351f11e66f08f06e37a985719a31ddb4/raw/b35ba7a3aac1949bd6bbeaad065a0a93dc3c34f0/01-cpu.patch
                 wget https://gist.githubusercontent.com/mj22226/b66f5c1bd5fc7e1cb3cf2c690b5dbd5a/raw/b955e726cbb0948d932c8d6143229ad604320149/20-lxc.patch
-                wget https://github.com/mj22226/packages/commit/3afa50b894e9bc35db470643316a3e242f9d84bc.patch
                 git apply 01-cpu.patch
                 git apply 20-lxc.patch
-                git apply 3afa50b894e9bc35db470643316a3e242f9d84bc.patch
                 cd -
                 sed -i "71s/'0'/'1'/" feeds/luci/applications/luci-app-statistics/root/etc/config/luci_statistics
                 sed -i "84s/'0'/'1'/" feeds/luci/applications/luci-app-statistics/root/etc/config/luci_statistics
