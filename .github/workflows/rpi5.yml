@@ -83,8 +83,8 @@ jobs:
                 sed -i "13s/'1'/'0'/" feeds/packages/utils/dockerd/files/etc/config/dockerd
                 ./scripts/feeds update -a
                 ./scripts/feeds install -a -f
+                sed -i '137d' package/base-files/Makefile
                 sed -i '143d' package/base-files/Makefile
-                sed -i '149d' package/base-files/Makefile
                 mkdir -p files/www/repo
                 mv config.buildinfo .config
                 make defconfig
