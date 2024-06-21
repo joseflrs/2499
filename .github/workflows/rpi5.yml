@@ -34,33 +34,13 @@ jobs:
                 git clone https://github.com/openwrt/openwrt.git
                 cp -rf rpi5/* openwrt/
                 cd openwrt
+                git remote add source https://github.com/mj22226/source.git
+                git fetch source
+                git switch linux-6.6
+                git format-patch main...linux-6.6 --stdout > 001.patch
+                git checkout main
+                git apply 001.patch
                 wget https://downloads.openwrt.org/snapshots/targets/bcm27xx/bcm2712/llvm-bpf-15.0.7.Linux-x86_64.tar.zst
-                wget https://github.com/mj22226/source/commit/73b2896fd247c80f28f8e313b92c5d4d19697e84.patch
-                wget https://github.com/mj22226/openwrt/commit/c86d619a592d1251788c908ca732d3006448fccd.patch
-                wget https://github.com/mj22226/openwrt/commit/066d400babe2de1d5d5c326e2f7a7b8ef7826eca.patch
-                wget https://github.com/mj22226/openwrt/commit/e89fc058e8dc43360f23ff0ff4a02939468afb94.patch
-                wget https://github.com/mj22226/openwrt/commit/bacc942480c2856a0b7ed3c776e591b59d77640d.patch
-                wget https://github.com/mj22226/openwrt/commit/d6f674f574ce841da1b3506de3eb50d4f2c595c9.patch
-                wget https://github.com/mj22226/openwrt/commit/6caf08fcbd6d07d30251ff6bef4110d5085f250a.patch
-                wget https://github.com/mj22226/openwrt/commit/5a6ced9123017156c187ca884bb018fa903b2c85.patch
-                wget https://github.com/mj22226/openwrt/commit/bad83f8e2acd4ed532f846ec874bae6da63e1bed.patch
-                wget https://github.com/mj22226/openwrt/commit/19f204e3050922b443f57994f5d0246be2956477.patch
-                wget https://github.com/mj22226/openwrt/commit/136eb8bdc9675dae65386f106918db512bdf59ff.patch
-                wget https://github.com/mj22226/openwrt/commit/d2c22e13f8f048ee96faa1547b0a4f2c4ee33152.patch
-                wget https://github.com/mj22226/openwrt/commit/74009a2f7edf0f0ac72ac86b844b6ced6d62d6c9.patch
-                git apply 73b2896fd247c80f28f8e313b92c5d4d19697e84.patch
-                git apply c86d619a592d1251788c908ca732d3006448fccd.patch
-                git apply 066d400babe2de1d5d5c326e2f7a7b8ef7826eca.patch
-                git apply e89fc058e8dc43360f23ff0ff4a02939468afb94.patch
-                git apply bacc942480c2856a0b7ed3c776e591b59d77640d.patch
-                git apply d6f674f574ce841da1b3506de3eb50d4f2c595c9.patch
-                git apply 6caf08fcbd6d07d30251ff6bef4110d5085f250a.patch
-                git apply 5a6ced9123017156c187ca884bb018fa903b2c85.patch
-                git apply bad83f8e2acd4ed532f846ec874bae6da63e1bed.patch
-                git apply 19f204e3050922b443f57994f5d0246be2956477.patch
-                git apply 136eb8bdc9675dae65386f106918db512bdf59ff.patch
-                git apply d2c22e13f8f048ee96faa1547b0a4f2c4ee33152.patch
-                git apply 74009a2f7edf0f0ac72ac86b844b6ced6d62d6c9.patch
                 tar -xvf llvm-bpf-15.0.7.Linux-x86_64.tar.zst
                 ./scripts/feeds update -a
                 ./scripts/feeds install -a
@@ -83,8 +63,6 @@ jobs:
                 sed -i "13s/'1'/'0'/" feeds/packages/utils/dockerd/files/etc/config/dockerd
                 ./scripts/feeds update -a
                 ./scripts/feeds install -a -f
-                sed -i '137d' package/base-files/Makefile
-                sed -i '143d' package/base-files/Makefile
                 mkdir -p files/www/repo
                 mv config.buildinfo .config
                 make defconfig
