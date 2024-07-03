@@ -40,7 +40,6 @@ jobs:
                 git format-patch main...linux-6.6 --stdout > 001.patch
                 git checkout main
                 git apply 001.patch
-                git revert --no-commit 6fdf3a32d97aca287c4a9f7121e589ecb1e64e18
                 wget https://downloads.openwrt.org/snapshots/targets/bcm27xx/bcm2712/llvm-bpf-18.1.7.Linux-x86_64.tar.zst
                 tar -xvf llvm-bpf-18.1.7.Linux-x86_64.tar.zst
                 ./scripts/feeds update -a
