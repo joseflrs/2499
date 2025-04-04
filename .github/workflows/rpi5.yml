@@ -13,6 +13,13 @@ jobs:
               run: |
                 sudo apt update
                 sudo apt install -y subversion build-essential gettext 2to3 python3-pyelftools python3-distutils-extra
+            - name: Delete workflow runs
+              uses: Mattraks/delete-workflow-runs@v2
+              with:
+                token: ${{ github.token }}
+                repository: ${{ github.repository }}
+                retain_days: 0
+                keep_minimum_runs: 0
             - name: Setup Go
               uses: actions/setup-go@v5
               with:
